@@ -1,68 +1,99 @@
-<div class="navbar navbar-static-top" role="navigation">
-  <div class="navbar-inner">
-    <div class="container-narrow">
-      <button type="button" class="btn btn-navbar" data-toggle="collapse"
-        data-target=".nav-collapse">
-        <span class="icon-bar"></span> <span class="icon-bar"></span> <span
-          class="icon-bar"></span>
-      </button>
-      <a class="brand" href="./"><img src="eclipse-logo.png" alt="Eclipse logo" 
-        id="logo" width="80" border="0">&nbsp;&nbsp;<img src="beta.png" alt="Beta" width="40" height="45" border=0 ></a></a>      
-      <div class="nav-collapse collapse">
-        <ul class="nav">
-          <li class="summary-menu"><a href="./">Summary</a></li>
-          <li class="listprojects-menu"><a href="projects.html">List of projects</a></li>
-          <li class="dropdown scm-menu"><a class="dropdown-toggle"
-            data-toggle="dropdown" href="">Source Code <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="scm.html">basic</a></li>
-              <li><a href="scm-contributors.html">contributors</a></li>
-              <li><a href="scm-repos.html">by repositories</a></li>
-              <li><a href="scm-projects.html">by projects</a></li>
-              <li><a href="scm-companies.html">by companies</a></li>
-              <li><a href="scm-companies-summary.html">by companies
-                  summary</a></li>
-            </ul></li>
-          <li class="dropdown its-menu"><a class="dropdown-toggle"
-            data-toggle="dropdown" href="">Tickets <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="its.html">basic</a></li>
-              <li><a href="its-contributors.html">participants</a></li>
-              <!-- <li><a href="its-companies.html">by companies</a></li> -->
-              <li><a href="its-repos.html">by repositories</a></li>
-              <li><a href="its-projects.html">by projects</a></li>
-              <li><a href="its-companies.html">by companies</a></li>
-            </ul></li>
-           <li class="dropdown mls-menu"><a class="dropdown-toggle"
-            data-toggle="dropdown" href="">Mailing <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="mls.html">basic</a></li>
-              <li><a href="mls-contributors.html">participants</a></li>
-              <li><a href="mls-companies.html">by companies</a></li>
-              <li><a href="mls-projects.html">by projects</a></li>
-              <li><a href="mls-repos.html">by repositories</a></li>
-            </ul></li>
-            <li class="dropdown scr-menu"><a class="dropdown-toggle"
-            data-toggle="dropdown" href="">Code Review <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="scr.html">basic</a></li>
-              <li><a href="scr-repos.html">by repositories</a></li>
-              <li><a href="scr-projects.html">by projects</a></li>
-              <li><a href="projects.html">by global projects</a></li>
-              
-              <li><a href="scr-companies.html">by companies</a></li>
-<!--               <li><a href="scr-companies-summary.html">by companies summary</a></li> -->
-            </ul></li>
-<!--           <li class="dropdown irc-menu"><a class="dropdown-toggle"
-            data-toggle="dropdown" href="">IRC <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="irc.html">basic</a></li>
-              <li><a href="irc-contributors.html">participants</a></li>
-              <li><a href="irc-repos.html">by channels</a></li>
-            </ul></li>
-        </ul>
-      </div>
-      <!--/.nav-collapse -->
-    </div>
-  </div>
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
+    <a class="navmenu-brand" href="#">Project name</a>
+    <ul class="nav navmenu-nav">
+        <li><a href="./">Summary</a></li>
+        <li><a href="projects.html">List of projects</a></li>
+        <!--<li class="divider"></li>
+            <li class="dropdown-header">Browse metrics by data source</li>-->
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-code"></i>&nbsp;Source code management
+                <b class="caret"></b></a>
+            <ul class="dropdown-menu navmenu-nav">
+                <li><a href="scm.html"><i class="fa fa-tachometer"></i> Overview</a></li>
+                <li><a href="scm-companies.html"><i class="fa fa-building-o"></i> Companies</a></li>
+                <li><a href="scm-contributors.html"><i class="fa fa-users"></i> Contributors</a></li>
+                <li><a href="scm-companies-summary.html"><i class="fa
+                                                                   fa-building-o"></i> Companies Summary</a></li>
+                <li><a href="scm-projects.html"><i class="fa fa-rocket"></i> Projects</a></li>
+                <li><a href="scm-repos.html"><i class="fa fa-code-fork"></i> Repositories</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                <i class="fa fa-ticket"></i> Tickets <b class="caret"></b></a>
+            <ul class="dropdown-menu navmenu-nav">
+                <li><a href="its.html"><i class="fa fa-tachometer"></i> Overview</a></li>
+                <li><a href="its-companies.html"><i class="fa fa-building-o"></i> Companies</a></li>
+                <li><a href="its-contributors.html"><i class="fa fa-users"></i> Contributors</a></li>
+                <li><a href="its-projects.html"><i class="fa fa-rocket"></i> Projects</a></li>
+                <li><a href="its-repos.html"><i class="fa fa-code-fork"></i> Repositories</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                <i class="fa fa-envelope-o"></i> Mailing lists <b class="caret"></b></a>
+            <ul class="dropdown-menu navmenu-nav">
+                <li><a href="mls.html"><i class="fa fa-tachometer"></i> Overview</a></li>
+                <li><a href="mls-companies.html"><i class="fa fa-building-o"></i> Companies</a></li>
+                <li><a href="mls-contributors.html"><i class="fa fa-users"></i> Contributors</a></li>
+                <li><a href="mls-projects.html"><i class="fa fa-rocket"></i> Projects</a></li>
+                <li><a href="mls-repos.html"><i class="fa fa-code-fork"></i> Repositories</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="">
+                <i class="fa fa-check"></i> Code review<b class="caret"></b></a>
+            <ul class="dropdown-menu navmenu-nav">
+                <li><a href="scr.html"><i class="fa fa-tachometer"></i> Overview</a></li>
+                <li><a href="scr-companies.html"><i class="fa fa-building-o"></i> Companies</a></li>
+                <!--<li><a href="scr-contributors.html"><i class="fa fa-users"></i> Contributors</a></li>-->
+                <li><a href="scr-projects.html"><i class="fa fa-rocket"></i> Projects</a></li>
+                <li><a href="scr-repos.html"><i class="fa fa-code-fork"></i> Repositories</a></li>
+            </ul>
+        </li>
+
+    </ul>
 </div>
+
+
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="row">
+        <div class="col-md-1">
+            <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--<span class="navbar-brand">Grimoire dashboard</span>-->
+        </div>
+        <div class="col-md-9 ProjectNavBar">
+          <!-- project nav bar will be created here -->
+        </div>
+        <div class="col-md-2">
+            <a href="projects.html"><button type="button" class="navbar-toggle pull-right"
+                                            data-toggle="tooltip" data-placement="left" title="Browse by projects">
+                    <i class="fa fa-sitemap"></i> Project Map
+            </button></a>
+        </div>
+    </div>
+</div>
+
+
+<!--
+    <div class="navbar navbar-default navbar-fixed-top">
+        <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">Grimoire dashboard</span>
+        <form action="contributor.html" class="navbar-form navbar-right" role="search" style="margin-right: 25px;">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="company, person, issue, etc.">
+            </div>
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span> Search</button>
+        </form>
+    </div>
+    -->

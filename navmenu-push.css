@@ -38,15 +38,24 @@ body {
     padding-top: 65px;
 }
 
+/*
+does not work
+#ProjectNavbar .breadcrumb li
+{ 
+  font-size: 1.2em;
+}*/
+
 .breadcrumb { 
     border-radius: 4px 4px 4px 4px !important;
     list-style: none outside none;
     padding: 0 0 0 0;
     margin-top: 15px;
     background-color: transparent;
+    font-size: 1.1em;
 }
 
 .ol { 
     margin-bottom: 10px;
     margin-top: 15px;
 }
+

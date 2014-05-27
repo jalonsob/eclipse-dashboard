@@ -77,14 +77,20 @@
                                      data-metrics="scm_commits" data-min="true"
                                      data-filter="projects" data-frame-time="true"
                                      data-light-style="true" style="height: 100px;"></div>
-                            </div>
+                                     <span
+                                     class="FilterItemMicrodashText"
+                                     data-filter="project" data-metric="scm_commits"></span>
+                            </div>                                     
                         </div>
                         
                         <div class="col-md-5"><div class="well well-small">
                             <div class="FilterItemMetricsEvol" data-data-source="scm"
                                  data-metrics="scm_authors" data-min="true" data-frame-time="true"
-                                 data-legend="true" data-filter="projects"
+                                 data-legend="true" data-filter="projects"                           
                                  style="height: 100px;"></div>
+                                 <span
+                                 class="FilterItemMicrodashText"
+                                 data-filter="project" data-metric="scm_authors"></span>
                             </div>
                         </div>
                     </div>
@@ -132,6 +138,11 @@
                                      data-metrics="its_closed" data-min="true"
                                      data-legend="true" data-filter="projects" data-frame-time="true"
                                      style="height: 100px;"></div>
+                                     <span
+                                     class="FilterItemMicrodashText"
+                                     data-filter="project" data-metric="its_closed"></span>
+
+                                     
                             </div>
                         </div>
                         
@@ -140,6 +151,9 @@
                                      data-metrics="its_closers" data-min="true" data-frame-time="true"
                                      data-legend="true" data-filter="projects"
                                      style="height: 100px;"></div>
+                                     <span
+                                     class="FilterItemMicrodashText"
+                                     data-filter="project" data-metric="its_closers"></span>
                             </div>
                         </div>
                     </div>
@@ -185,18 +199,18 @@
 
                         <div class="col-md-5"><div class="well well-small">
                                 <div class="FilterItemMetricsEvol" data-data-source="scr"
-                                     data-metrics="scr_submitted,scr_merged,scr_abandoned"
+                                     data-metrics="scr_merged"
                                      data-legend="true" data-filter="projects" data-frame-time="true"
                                      data-min="true" style="height: 100px;"
-                                     ></div>
+                                  ></div>
+                                  <span
+                                  class="FilterItemMicrodashText"
+                                  data-filter="project" data-metric="scr_merged"></span>
                             </div>
                         </div>
 
                         <div class="col-md-5"><div class="well well-small">
-                                <div class="FilterItemMetricsEvol" data-data-source="scr"
-                                     data-metrics="pending" data-frame-time="true"
-                                     data-legend="true" data-filter="projects"
-                                     data-min="true" style="height: 100px;"></div>
+                                
                         </div></div>
                     </div>
                     <!-- end scr-->
@@ -243,6 +257,9 @@
                                  data-metrics="mls_sent"
                                  data-legend="true" data-filter="projects" data-frame-time="true"
                                  data-min="true" style="height: 100px;"></div>
+                                 <span
+                                 class="FilterItemMicrodashText"
+                                 data-filter="project" data-metric="mls_sent"></span>
                             </div>
                         </div>
 
@@ -251,7 +268,11 @@
                                  data-metrics="mls_senders" data-frame-time="true"
                                  data-legend="true" data-filter="projects"
                                  data-min="true" style="height: 100px;"></div>
-                            </div>
+                                 <span
+                                 class="FilterItemMicrodashText"
+                                 data-filter="project"
+                                 data-metric="mls_senders"></span>
+                                 </div>
                         </div>
                     </div>
                     <!-- end scr-->

@@ -252,6 +252,12 @@
         "name" : "Closed reviews",
         "desc" : "Number of closed review processes (merged or abandoned)"
     },
+    "scr_submitters" : {
+        "divid" : "scr_submitters",
+        "column" : "submitters",
+        "name" : "Reviews submitters",
+        "desc" : "Number of people submitting review processes."
+    },
     "scr_new" : {
         "divid" : "scr_new",
         "column" : "new",

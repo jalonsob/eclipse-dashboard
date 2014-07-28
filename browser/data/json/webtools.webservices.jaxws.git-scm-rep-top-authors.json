@@ -1,1 +1,1 @@
-{"authors": ["sclarke", "kchong", "david_williams@us.ibm.com", "dbranekov", "ohurley", "Thanh Ha"], "commits": [289, 183, 33, 25, 12, 6], "id": [1812, 1626, 273, 1060, 1815, 200]}
+{"authors.": {"authors": ["sclarke", "kchong", "david_williams@us.ibm.com", "dbranekov", "ohurley", "Thanh Ha"], "commits": [289, 183, 33, 25, 12, 6], "id": [1812, 1626, 273, 1060, 1815, 200]}, "authors.last month": {"authors": "kchong", "commits": 1, "id": 1626}, "authors.last year": {"authors": ["sclarke", "Thanh Ha", "kchong"], "commits": [19, 6, 2], "id": [1812, 200, 1626]}}

@@ -37,9 +37,34 @@ var Polarsys = {};
                    "community_metrics":{},
                    "usage_metrics":{}
                     };
+    // Map the metrics names to grimoire lib metrics names
+    var metrics_to_grimoirelib = {
+            "scm_commits_1m":"scm_commits",
+            "scm_committers_1m":"scm_authors",
+            "scm_committed_files_1m":"scm_files"
+    };
 
+    function displayVizEvol(metric) {
+        // Display evolution in time of a metric using the min viz.
+        metric = metrics_to_grimoirelib[metric];
+        html = '';
+        html += ' \
+            <div class="FilterItemMetricsEvol" data-data-source="scm" \
+            data-metrics="'+metric+'" data-min="true" data-frame-time="true" \
+            data-legend1="true" data-filter="projects" style="height: 100px;"> \
+            </div> \
+        ';
+        return html;
+    }
+
+    
     // Quick hack to show metrics with some design inside Bootstrap
     function displayMetric(name, description, value) {
+        metric = metrics_to_grimoirelib[name];
+        if (Report.getAllMetrics()[metric] !== undefined)
+            description = Report.getAllMetrics()[metric].desc;
+        // Temporal hack
+        description = description.replace("aggregating all branches","");
         html = ' \
               <div class="well"> \
                 <div class="row thin-border"> \
@@ -49,7 +74,8 @@ var Polarsys = {};
                   <div class="col-md-12 medium-fp-number">'+value+'</span> \
                   </div> \
                 </div> \
-               <div>'+description+'</div> \
+               <div style="height: 120px; font-size: 70%;">'+displayVizEvol(name)+'</div> \
+               <div style="font-size: 80%;">'+description+'</div> \
               </div> \
         ';
         return html;
@@ -67,26 +93,11 @@ var Polarsys = {};
             html += '</div>';
         });
         $("#"+div).html(html);
+        // We need to convert the viz
+        item = Report.getParameterByName("project");
+        Convert.convertFilterItemMetricsEvol("projects", item);
+
         return;
-
-        html = "";
-        html += "<h2>SONAR Metrics</h2>";
-        $.each(sonar_metrics, function(metric, value) {
-            html += displayMetric(metric,"",value);
-            // html += metric + ":" + value + " ";
-        });
-        html += "<br>";
-        html += "<h2>SONAR Metrics</h2>";
-        $.each(grimoirelib_metrics, function(metric, value) {
-            html += metric + ":" + value + " ";
-        });
-        html += "<br>";
-        $.each(pmi_metrics, function(metric, value) {
-            html += metric + ":" + value + " ";
-        });
-
-        html += displayMetric("","","");
-        $("#"+div).html(html);
     }
 
     function loadPolarsysMetrics (cb) {

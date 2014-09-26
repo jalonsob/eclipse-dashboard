@@ -100,15 +100,24 @@ var Polarsys = {};
         return;
     }
 
+    function convert_boris_json(data) {
+        var new_data = {};
+        $.each (data.children, function(i, metric) {
+            new_data[metric.name] = metric.value;
+        });
+        return new_data;
+    }
+
     function loadPolarsysMetrics (cb) {
         $.when($.getJSON(sonar_json),$.getJSON(grimoirelib_json),$.getJSON(pmi_json)
             ).done(function(sonar, grimoirelib, pmi) {
                 sonar_metrics = sonar[0];
                 grimoirelib_metrics = grimoirelib[0];
-                pmi_metrics = pmi[0];
+                pmi_metrics = convert_boris_json(pmi[0]);
                 // First approach
                 metrics.product_metrics = sonar_metrics;
-                metrics.process_metrics = grimoirelib_metrics;                
+                metrics.process_metrics = grimoirelib_metrics;
+                metrics.usage_metrics = pmi_metrics;
                 cb();
         }).fail(function() {
             alert("Can't read Polarys JSON files. Review: " + 

@@ -32,13 +32,51 @@ var Polarsys = {};
     var sonar_metrics = null;
     var grimoirelib_metrics = null;
     var pmi_metrics = null;
+    var metrics = {"process_metrics": {},
+                   "product_metrics":{},
+                   "community_metrics":{},
+                   "usage_metrics":{}
+                    };
+
+    // Quick hack to show metrics with some design inside Bootstrap
+    function displayMetric(name, description, value) {
+        html = ' \
+              <div class="well"> \
+                <div class="row thin-border"> \
+                  <div class="col-md-12">' + name + '</div> \
+                </div> \
+                <div class="row grey-border"> \
+                  <div class="col-md-12 medium-fp-number">'+value+'</span> \
+                  </div> \
+                </div> \
+               <div>'+description+'</div> \
+              </div> \
+        ';
+        return html;
+    }
 
     function displayPolarsysMetrics(div) {
         html = "";
+        $.each(metrics, function(id, mgroup){
+            if (mgroup === null) return;
+            html += '<div class="col-md-3">';
+            html += "<h2>"+id+"</h2>";
+            $.each(mgroup, function(metric, value){
+                html += displayMetric(metric,"",value);
+            });
+            html += '</div>';
+        });
+        $("#"+div).html(html);
+        return;
+
+        html = "";
+        html += "<h2>SONAR Metrics</h2>";
         $.each(sonar_metrics, function(metric, value) {
-            html += metric + ":" + value + " ";
+            html += displayMetric(metric,"",value);
+            // html += metric + ":" + value + " ";
         });
         html += "<br>";
+        html += "<h2>SONAR Metrics</h2>";
         $.each(grimoirelib_metrics, function(metric, value) {
             html += metric + ":" + value + " ";
         });
@@ -46,6 +84,8 @@ var Polarsys = {};
         $.each(pmi_metrics, function(metric, value) {
             html += metric + ":" + value + " ";
         });
+
+        html += displayMetric("","","");
         $("#"+div).html(html);
     }
 
@@ -55,6 +95,9 @@ var Polarsys = {};
                 sonar_metrics = sonar[0];
                 grimoirelib_metrics = grimoirelib[0];
                 pmi_metrics = pmi[0];
+                // First approach
+                metrics.product_metrics = sonar_metrics;
+                metrics.process_metrics = grimoirelib_metrics;                
                 cb();
         }).fail(function() {
             alert("Can't read Polarys JSON files. Review: " + 

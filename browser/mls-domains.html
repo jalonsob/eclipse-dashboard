@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -33,86 +32,77 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      <div class="row"><h4>Information about all domains</h4></div>
-<!-- info text -->
-<div id="info" class="row">
-  <div class="col-md-5">
-    Some charts and tables for top domains in the project, and a summary
-    of the evolution of their participation with links to more detailed
-    information per domain.
-  </div>
-  <div class="col-md-7">
-    <!-- evolution #domains -->
-    <i>
-      <b>Active Domains per month</b>
-    </i>
-    <div class="MetricsEvol" data-data-source="mls"
-         data-metrics="mls_domains" data-legend="false" style="height: 80px;"></div>
-  </div>
-</div>
-<!-- end info text -->
-
-
-<!-- list of domains -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="mls"
-       data-order-by="mls_domains" data-filter="domains" style="align: center"></div>
-</div>
-<!-- end list of domains -->
-
-
-<!-- sent msgs, senders per domain -->
+      <!-- info text -->
 <div class="well">
-  <div id="summary-static" class="row">
-    <!-- sent -->
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top mail domains in the project, and a summary of the evolution of their participation with links to more detailed information per domain</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="mls"
+           data-metrics="mls_domains" data-legend="false" 
+           data-title="Active mail domains per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="mls"
+	   data-order-by="mls_sent" data-filter="domains"></div>
+    </div>
+  </div>
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
     <div class="col-md-1"></div>
     <div class="col-md-4">
-      <i>
-        <b>Sent per domain (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="mls"
            data-metric="mls_sent" data-filter="domains"
-           data-legend-div="domains_legend" data-limit="10"
-           data-order-by="mls_sent">
-      </div>
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="mls_sent"
+           data-title="Mail messages per domain"></div>
     </div>
-    <!-- end sent -->
-
-    <div class="col-md-2" id="domains_legend"></div>
-
-    <!-- senders -->
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
     <div class="col-md-4">
-      <i>
-        <b>Senders per domain (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="mls"
            data-metric="mls_senders" data-filter="domains"
-           data-legend="false" data-limit="10"
-           data-order-by="mls_senders"></div>
+           data-legend="false" data-limit="10" data-order-by="mls_sent"
+           data-title="Mail senders per domain"></div>
     </div>
-    <!-- end senders -->
+    <!-- end authors -->
     <div class="col-md-1"></div>
   </div>
-</div>
-<!-- sent msgs, senders per domain -->
+  <!-- end of bar charts: commits, authors company -->
 
-<div id="summary-static" class="row"></div>
-
-<!-- domains list -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-data-source="mls"
-       data-metrics="mls_sent,mls_senders" data-filter="domains"
-       data-order-by="mls_sent">
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="mls"
+         data-metrics="mls_sent,mls_senders" data-filter="domains"
+         data-order-by="mls_sent"></div>
   </div>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="mls"
+	   data-order-by="mls_sent" data-filter="domains"></div>
+    </div>
+  </div>
+  
 </div>
-<!-- end domains list -->
+<!-- end commits per company -->
+
+
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

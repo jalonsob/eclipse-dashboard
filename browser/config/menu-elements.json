@@ -1,0 +1,36 @@
+{
+    "menu":{
+	"scm": [
+            "companies",
+            "companies-summary",
+            "contributors",
+            "projects",
+            "repos"
+	],
+	"mls": [
+            "companies",
+            "contributors",
+            "projects",
+            "repos"
+	],
+	"studies": [
+            "demographics"
+	],
+	"its": [
+            "companies",
+            "contributors",
+            "projects",
+            "repos"
+	],
+	"scr": [
+            "companies",
+            "companies-summary",
+            "projects",
+            "repos"
+	],
+    "extra": [
+        ["Companies integrated report", "companies.html"]
+    ]
+    },
+    "releases":["5y"]
+}

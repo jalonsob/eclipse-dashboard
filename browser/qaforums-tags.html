@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -33,68 +32,77 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      <div class="row"><h4>Information about tags used</h4></div>
-
-<!-- list of repositories -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="qaforums"
-       data-order-by="qaforums_qsent" data-filter="repos" style="align: center"></div>                  
-</div>
-<!-- end list of repositories -->
-
-<!-- commits, authors repository -->
+      <!-- info text -->
 <div class="well">
-  <div id="summary-static" class="row">
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top questions in the forums, and a summary of the evolution of their tags with links to more detailed information</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="qaforums"
+           data-metrics="qaforums_qsent" data-legend="false" 
+           data-title="Total questions sent per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="qaforums"
+	   data-order-by="qaforums_qsenders" data-filter="repos"></div>
+    </div>
+  </div>
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
     <!-- commits -->
     <div class="col-md-1"></div>
     <div class="col-md-4">
-      <i>
-        <b>Questions per tag (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="qaforums"
            data-metric="qaforums_qsent" data-filter="repos"
-           data-legend-div="repos_legend" data-limit="10"
-           data-order-by="qaforums_qsent">
-      </div>
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="qaforums_qsenders"
+           data-title="Questions per tag"></div>
     </div>
     <!-- end commits -->
-
-    <div class="col-md-2" id="repos_legend"></div>
-
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
     <!-- authors -->
     <div class="col-md-4">
-      <i>
-        <b>Authors per tag (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="qaforums"
-           data-metric="qsenders" data-filter="repos"
-           data-legend="false" data-limit="10"
-           data-order-by="qsenders"></div>
+           data-metric="qaforums_qsenders" data-filter="repos"
+           data-legend="false" data-limit="10" data-order-by="qaforums_qsenders"
+           data-title="Authors of the questions per tag"></div>
     </div>
     <!-- end authors -->
     <div class="col-md-1"></div>
   </div>
-</div>
-<!-- end commits, authors repository -->
+  <!-- end of bar charts: commits, authors company -->
 
-
-<div id="summary-static" class="row"></div>
-
-<!-- commits per repository -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-data-source="qaforums"
-       data-metrics="qaforums_qsent,qsenders" data-filter="repos">
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="qaforums"
+         data-metrics="qaforums_qsent,qaforums_qsenders" data-filter="repos"
+         data-order-by="qaforums_qsenders"></div>
   </div>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="qaforums"
+	   data-order-by="qaforums_qsenders" data-filter="repos"></div>
+    </div>
+  </div>
+  
 </div>
-<!-- end commits per repository -->
+<!-- end commits per company -->
+
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -34,78 +33,76 @@
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
       <!-- info text -->
-<div id="info" class="row">
-  <div class="col-md-5">Some charts and tables for top repositories in
-    the project, and a summary of the evolution of their participation with
-    links to more detailed information per repository.</div>
-  <div class="col-md-7">
-    <!-- evolution #repositories -->
-    <i> <b>Active Repositories per month</b>
-    </i>
-    <div class="MetricsEvol" data-data-source="scr"
-         data-metrics="scr_repositories" data-legend="false"
-         style="height: 80px;"></div>
-  </div>
-</div>
-<!-- end info text -->
-
-
-<!-- list of repositories -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="scr"
-       data-order-by="scr_submitted" data-filter="repos" style="align: center"></div>
-</div>
-<!-- end list of repositories -->
-
-
-<!-- submitted, merged repository -->
 <div class="well">
-  <div id="summary-static" class="row">
-    <!-- submitted -->
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top repositories in the project, and a summary of the evolution of their participation with links to more detailed information per repository</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="scr"
+           data-metrics="scr_repositories" data-legend="false" 
+           data-title="Active repositories per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="scr"
+	   data-order-by="scr_submitted" data-filter="repos"></div>
+    </div>
+  </div>
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
     <div class="col-md-1"></div>
     <div class="col-md-4">
-      <i> <b>Submitted per repository (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="scr"
            data-metric="scr_submitted" data-filter="repos"
-           data-legend-div="repos_legend" data-limit="10"
-           data-order-by="scr_submitted"></div>
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="scr_submitted"
+           data-title="Reviews submitted per repository"></div>
     </div>
-    <!-- end submitted -->
-
-    <div class="col-md-2" id="repos_legend"></div>
-
-    <!-- merged -->
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
     <div class="col-md-4">
-      <i> <b>Senders per repository (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="scr"
-           data-metric="scr_merged" data-filter="repos" data-legend="false"
-           data-limit="10" data-order-by="scr_submitted"></div>
+           data-metric="scr_merged" data-filter="repos"
+           data-legend="false" data-limit="10" data-order-by="scr_submitted"
+           data-title="Reviews merged per repository"></div>
     </div>
-    <!-- end merged -->
+    <!-- end authors -->
     <div class="col-md-1"></div>
   </div>
-</div>
-<!-- end submitted, merged repository -->
+  <!-- end of bar charts: commits, authors company -->
 
-<div id="summary-static" class="row"></div>
-
-<!-- submitted per repository -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-data-source="scr"
-       data-metrics="scr_submitted,pending,review_time_days_avg"
-       data-filter="repos"></div>
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="scr"
+         data-metrics="scr_submitted,scr_merged" data-filter="repos"
+         data-order-by="scr_submitted"></div>
+  </div>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="scr"
+	   data-order-by="scr_submitted" data-filter="repos"></div>
+    </div>
+  </div>
+  
 </div>
-<!-- end submitted per repository -->
+<!-- end commits per company -->
+
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

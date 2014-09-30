@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -33,97 +32,77 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      
-<!-- info text -->
-<div id="info" class="row">
-  <h4>Information about all companies</h4>
-  Some charts and tables for top countries in the project, and a summary of
-  the evolution of their participation with links to more detailed
-  information per country.
-</div>
-<!-- end info text -->
-
-<!-- evolution #countries -->
-<div id="summary-evol" class="row">
-  <!-- graph -->
-  <div class="col-md-6">
-    <div class="MetricsEvol" data-data-source="scm"
-         data-metrics="scm_countries" data-legend="false" data-help="false"></div>
-    <i><b>Active Countries per month</b></i> <a
-                                                href="notes.html#note:charts:countries"><img src="qm_15.png"></a>
+      <!-- info text -->
+<div class="well">
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top countries in the project, and a summary of the evolution of their participation with links to more detailed information per country</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="scm"
+           data-metrics="scm_countries" data-legend="false" 
+           data-title="Active countries per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
   </div>
-  <!-- end graph -->
 
-  <div class="col-md-6">
-    <div class="FilterItemsSummary" data-filter="countries"
-         data-data-source="scm"></div>
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="scm"
+	   data-order-by="scm_commits" data-filter="countries"></div>
+    </div>
   </div>
-</div>
-<!-- end evolution #countries -->
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+      <div class="FilterItemsGlobal" data-data-source="scm"
+           data-metric="scm_commits" data-filter="countries"
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="scm_commits"
+           data-title="Commits per country"></div>
+    </div>
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
+    <div class="col-md-4">
+      <div class="FilterItemsGlobal" data-data-source="scm"
+           data-metric="scm_authors" data-filter="countries"
+           data-legend="false" data-limit="10" data-order-by="scm_commits"
+           data-title="Authors per country"></div>
+    </div>
+    <!-- end authors -->
+    <div class="col-md-1"></div>
+  </div>
+  <!-- end of bar charts: commits, authors company -->
 
-<!-- commits, authors per country -->
-<div id="summary-static" class="row">
-
-  <!-- commmits -->
-  <div class="col-md-5">
-    <div class="FilterItemsGlobal" data-data-source="scm"
-         data-metric="scm_commits" data-filter="countries"
-         data-legend-div="countries_legend" data-limit="10"
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="scm"
+         data-metrics="scm_commits,scm_authors" data-filter="countries"
          data-order-by="scm_commits"></div>
-    <i> <b>Commits per country (aggregated)</b> <a
-                                                   href="notes.html#note:charts:countries:commits"><img
-                                                                                                      src="qm_15.png"></a>
-    </i>
   </div>
-  <!-- end commits -->
-
-  <div class="col-md-2" id="countries_legend"></div>
-
-  <!-- authors -->
-  <div class="col-md-5">
-    <div class="FilterItemsGlobal" data-data-source="scm"
-         data-metric="scm_authors" data-filter="countries" data-legend="false"
-         data-limit="10" data-order-by="scm_commits"></div>
-    <i> <b>Authors per country (aggregated))</b> <a
-                                                    href="notes.html#note:charts:countries:authors"><img
-                                                                                                       src="qm_15.png"></a>
-    </i>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="scm"
+	   data-order-by="scm_commits" data-filter="countries"></div>
+    </div>
   </div>
-  <!-- end authors -->
-
+  
 </div>
-<!-- end commits, authors per country -->
-
-<!-- list of countries -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="scm"
-       data-order-by="scm_commits" data-filter="companies"
-       style="align: center"></div>
-</div>
-<!-- end list of countries -->
-
-<!-- countries charts -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-metrics="scm_commits,scm_authors"
-       data-filter="countries" data-order-by="scm_commits"
-       data-data-source="scm"></div>
-</div>
-<!-- end countries charts -->
-
-<div class="row" style="margin-top: 10px;">
-  <div class="col-md-12">
-    <div id="Refcard"></div>
-  </div>
-</div>
+<!-- end commits per company -->
 
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

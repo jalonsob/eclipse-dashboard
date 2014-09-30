@@ -1,23 +1,28 @@
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
-    <a class="navmenu-brand" href="#">Eclipse Dashboard</a>
-    <div class="SideNavBar"></div>
-</div>
-
-<div class="github-fork-ribbon-wrapper right">
-  <div class="github-fork-ribbon">
-    <!--  On click jump to 5y dash -->
-    <a href="" onclick="window.open('/5y/'+document.URL.split('/').pop())">All history</a>
-  </div>
+  <a class="navmenu-brand report_name" href="./"></a>
+  <div class="SideNavBar"></div>
 </div>
 
 <div class="navbar navbar-default navbar-fixed-top">
-  <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-  </button>
-  <span class="navbar-brand"><img class="media-object" src="./eclipse-logo.png"/></span>
-  <span class="navbar-brand"><strong id="ProjectName"><div class="ProjectNavBar"></div></strong></span>
-  <div class="btn-group" id="sp">
+  <div class="row">
+    <div class="col-md-9">
+      <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        <img src="./eclipse-logo.png" style="height: 25px;">
+      </span>
+      <span class="navbar-brand">
+        <strong id="ProjectName"><div class="ProjectNavBar"></div></strong>
+      </span>
+      <div class="btn-group" id="sp">
+      </div>
+    </div>
+    <div class="col-md-3">      
+      <div class="ReleaseSelector"></div>      
+    </div>
   </div>
+
 </div>

@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -33,160 +32,38 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      
-<div class="row">
+      <div class="row">
 
   <div class="col-md-12">
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="FilterItemData"></div>
-      </div>
+    <div class="wellmin">
+      <div class="FilterItemData" data-filter="companies"></div>
     </div>
-
-    <!-- scm charts -->
-    <div class="row">
-      <div class="col-md-2">
-        <div class="FilterItemSummary" data-data-source="scm"
-             data-filter="companies"></div>
-      </div>
-
-      <!-- commits -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="scm"
-             data-metrics="scm_commits" data-legend="false"
-             data-filter="companies"></div>
-      </div>
-      <!-- end commits -->
-
-      <!-- authors -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="scm"
-             data-metrics="scm_authors" data-legend="false"
-             data-filter="companies"></div>
-      </div>
-      <!-- end authors -->
-
-      <!-- end added, removed lines -->
-      <!--           <div class="col-md-3">
-                     <div class="FilterItemMetricsEvol" data-data-source="scm"
-                          data-metrics="scm_added_lines,scm_removed_lines"
-                          data-legend="false" data-filter="companies"></div>
-      </div>
-      -->
-      <!-- end added,removed lines -->
-
-      <div class="col-md-2">
-        <div class="FilterItemTop" data-data-source="scm"
-             data-metric="scm_authors" data-period="all" data-titles="false"
-             data-filter="companies"></div>
-      </div>
-
-    </div>
-    <!-- end scm charts -->
-
-    <!-- its charts -->
-    <div class="row">
-      <div class="col-md-2">
-        <div class="FilterItemSummary" data-data-source="its"
-             data-filter="companies"></div>
-      </div>
-
-      <!-- end closed, opened tickets -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="its"
-             data-metrics="its_closed,its_opened" data-legend="false1"
-             data-filter="companies"></div>
-      </div>
-      <!-- end closed, opened tickets -->
-
-      <!-- closers, openers -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="its"
-             data-metrics="its_closers,its_openers" data-legend="false1"
-             data-filter="companies"></div>
-      </div>
-
-      <div class="col-md-2">
-        <div class="FilterItemTop" data-data-source="its"
-             data-metric="its_closers" data-period="all" data-titles="false"
-             data-filter="companies"></div>
-
-        <!-- end closers, openers -->
-      </div>
-    </div>
-    <!-- end its charts -->
-
-    <!-- mls charts -->
-    <div class="row">
-      <div class="col-md-2">
-        <div class="FilterItemSummary" data-data-source="mls"
-             data-filter="companies"></div>
-      </div>
-
-      <!-- sent msgs -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="mls"
-             data-metrics="mls_sent" data-legend="false" data-filter="companies"></div>
-      </div>
-
-      <!-- senders -->
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="mls"
-             data-metrics="mls_senders" data-legend="false"
-             data-filter="companies"></div>
-      </div>
-      <!-- end senders -->
-
-      <div class="col-md-2">
-        <div class="FilterItemTop" data-data-source="mls"
-             data-metric="mls_senders" data-period="all" data-titles="false"
-             data-filter="companies"></div>
-      </div>
-
-    </div>
-    <!-- end mls charts -->
-
-    <div class="row">
-      <div class="col-md-2">
-        <div class="FilterItemSummary" data-data-source="scr"
-             data-filter="companies"></div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="FilterItemMetricsEvol" data-data-source="scr"
-             data-metrics="scr_submitted,scr_merged" data-legend="false1"
-             data-filter="companies"></div>
-      </div>
-
-      <!--           <div class="col-md-4">
-                     <div class="FilterItemMetricsEvol" data-data-source="scr"
-                          data-metrics="scr_mergers" data-legend="false"
-                          data-filter="companies"></div>
-      </div>
-      -->
-
-      <!--           <div class="col-md-2">
-                     <div class="FilterItemTop" data-data-source="scr"
-                          data-metric="scr_senders" data-period="all" data-titles="false"
-                          data-filter="companies"></div>
-      </div>
-      -->
-    </div>
-    <!-- end mls charts -->
-
-
-
   </div>
-  <!-- end charts -->
 </div>
+
+<div class="row">
+
+    <div class="FilterDSBlock" data-filter="companies" data-data-source="scm" 
+         data-metrics="scm_commits,scm_authors"></div>
+
+    <div class="FilterDSBlock" data-filter="companies" data-data-source="scr" 
+         data-metrics="scr_submitted:scr_merged"></div>
+
+    <div class="FilterDSBlock" data-filter="companies" data-data-source="its" 
+         data-metrics="its_closed:its_opened,its_closers:its_openers"></div>
+
+    <div class="FilterDSBlock" data-filter="companies" data-data-source="mls" 
+         data-metrics="mls_sent,mls_senders"></div>
+
+</div>
+
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

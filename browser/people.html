@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -35,81 +34,44 @@
       <!-- REPLACE SECTION HTML -->
       <div class="row">
   <div class="col-md-12">
-    <div class="PersonData"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="scm"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="scm" data-legend="false"
-         data-metrics="scm_commits" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="its"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="its" data-legend="false"
-         data-metrics="its_closed" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="mls"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="mls" data-legend="false"
-         data-metrics="mls_sent" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="irc"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="irc" data-legend="false"
-         data-metrics="irc_sent" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="scr"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="scr" data-legend="false"
-         data-metrics="scr_closed" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="mediawiki"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="mediawiki" data-legend="false"
-         data-metrics="revisions" data-legend="true"></div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-2">
-    <div class="PersonSummary" data-data-source="releases"></div>
-  </div>
-  <div class="col-md-10">
-    <div class="PersonMetrics" data-data-source="releases" data-legend="false"
-         data-metrics="releases_releases" data-legend="true"></div>
+    <div class="wellmin">
+	  <div class="PersonData"></div>
+	</div>
   </div>
 </div>
 
+<div class="row">
+
+  <div class="PersonSummaryBlock" data-data-source="scm" 
+       data-metrics="scm_commits"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="scr" 
+       data-metrics="scr_closed"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="its" 
+       data-metrics="its_closed"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="mls" 
+       data-metrics="mls_sent"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="irc" 
+       data-metrics="irc_sent"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="mediawiki" 
+       data-metrics="revisions"></div>
+
+  <div class="PersonSummaryBlock" data-data-source="releases" 
+       data-metrics="releases_releases"></div>
+
+</div>
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

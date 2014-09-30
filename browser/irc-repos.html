@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -33,88 +32,77 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      
-<div class="row"><h4>Information about all channels</h4></div>
-<!-- info text -->
-<div id="info" class="row">
-  <div class="col-md-5">
-    Some charts and tables for top channels in the project, and a summary
-    of the evolution of their participation with links to more detailed
-    information per channel.
-  </div>
-  <div class="col-md-7">
-    <!-- evolution #channels -->
-    <i>
-      <b>Active Channels per month</b>
-    </i>
-    <div class="MetricsEvol" data-data-source="irc"
-         data-metrics="irc_repositories" data-legend="false" style="height: 80px;"></div>
-  </div>
-</div>
-<!-- end info text -->           
-
-
-<!-- list of channels -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="irc"
-       data-order-by="irc_sent" data-filter="repos" style="align: center"></div>                  
-</div>
-<!-- end list of channels -->
-
-
-<!-- sent, senders channel -->
+      <!-- info text -->
 <div class="well">
-  <div id="summary-static" class="row">
-    <!-- sent -->
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top channels in the project, and a summary of the evolution of their participation with links to more detailed information per channel</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="irc"
+           data-metrics="irc_repositories" data-legend="false" 
+           data-title="Active channels per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="irc"
+	   data-order-by="irc_sent" data-filter="repos"></div>
+    </div>
+  </div>
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
     <div class="col-md-1"></div>
     <div class="col-md-4">
-      <i>
-        <b>Messages per channel (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="irc"
            data-metric="irc_sent" data-filter="repos"
-           data-legend-div="repos_legend" data-limit="10"
-           data-order-by="irc_sent">
-      </div>
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="irc_sent"
+           data-title="Messages per channel"></div>
     </div>
-    <!-- end sent -->
-
-    <div class="col-md-2" id="repos_legend"></div>
-
-    <!-- senders -->
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
     <div class="col-md-4">
-      <i>
-        <b>Senders per channel (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="irc"
            data-metric="irc_senders" data-filter="repos"
-           data-legend="false" data-limit="10"
-           data-order-by="irc_sent"></div>
+           data-legend="false" data-limit="10" data-order-by="irc_sent"
+           data-title="People sending messages per channel"></div>
     </div>
-    <!-- end senders -->
+    <!-- end authors -->
     <div class="col-md-1"></div>
   </div>
-</div>
-<!-- end sent, senders channel -->
+  <!-- end of bar charts: commits, authors company -->
 
-<div id="summary-static" class="row"></div>
-
-<!-- sent per channel -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-data-source="irc"
-       data-metrics="irc_sent,irc_senders" data-filter="repos"
-       data-order-by="irc_sent">
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="irc"
+         data-metrics="irc_sent,irc_senders" data-filter="repos"
+         data-order-by="irc_sent"></div>
   </div>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="irc"
+	   data-order-by="irc_sent" data-filter="repos"></div>
+    </div>
+  </div>
+  
 </div>
-<!-- end sent per channel -->
+<!-- end commits per company -->
+
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

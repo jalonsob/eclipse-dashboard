@@ -14,7 +14,7 @@
     <link href="./css/jasny-bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/navmenu-push.css" rel="stylesheet">
+    <link href="./css/custom.css" rel="stylesheet">
 
     <!-- icons -->
     <link rel="stylesheet" href="./css/awesome/css/font-awesome.min.css">
@@ -22,7 +22,6 @@
     <!-- custom -->
     <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
     <link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
-    <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
   </head>
   <body>
     
@@ -34,87 +33,76 @@
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
       <!-- info text -->
-<div id="info" class="row">
-  <h4>Information about all companies</h4>
-  Some charts and tables for top countries in the project, and a summary of
-  the evolution of their participation with links to more detailed
-  information per country.
-</div>
-<!-- end info text -->
-
-<!-- evolution #countries -->
-<div id="summary-evol" class="row">
-  <!-- graph -->
-  <div class="col-md-6">
-    <div class="MetricsEvol" data-data-source="its" data-metrics="its_countries"
-         data-legend="false" data-help="false"></div>
-    <i><b>Active Countries per month</b></i>
-    <a href="notes.html#note:charts:countries"><img src="qm_15.png"></a>
+<div class="well">
+  <div class="row">
+    <div class="col-md-6">      
+      <p>Some charts and tables for top countries in the project, and a summary of the evolution of their participation with links to more detailed information per country.</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="its"
+           data-metrics="its_countries" data-legend="false" 
+           data-title="Active countries per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
   </div>
-  <!-- end graph -->
 
-  <div class="col-md-6">
-    <div class="FilterItemsSummary" data-filter="countries"
-         data-data-source="its"></div>
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="its"
+	   data-order-by="its_closed" data-filter="countries"></div>
+    </div>
   </div>
-</div>
-<!-- end evolution #countries -->
-
-<!-- closed tickets, closers per country -->
-<div id="summary-static" class="row">
-
-  <!-- closed tickets -->
-  <div class="col-md-5">
-    <div class="FilterItemsGlobal" data-data-source="its"
-         data-metric="its_closed" data-filter="countries"
-         data-legend-div="countries_legend"
-         data-limit="10" data-order-by="its_closed"></div>
-    <i>
-      <b>Closed per country (aggregated)</b>
-      <a href="notes.html#note:charts:countries:closed"><img src="qm_15.png"></a>
-    </i>
+  
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+      <div class="FilterItemsGlobal" data-data-source="its"
+           data-metric="its_closed" data-filter="countries"
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="its_closed"
+           data-title="Issues closed per country"></div>
+    </div>
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
+    <div class="col-md-4">
+      <div class="FilterItemsGlobal" data-data-source="its"
+           data-metric="its_closers" data-filter="countries"
+           data-legend="false" data-limit="10" data-order-by="its_closed"
+           data-title="People closing issues per country"></div>
+    </div>
+    <!-- end authors -->
+    <div class="col-md-1"></div>
   </div>
-  <!-- end closed tickets -->
+  <!-- end of bar charts: commits, authors company -->
 
-  <div class="col-md-2" id="countries_legend"></div>
-
-  <!-- closers -->
-  <div class="col-md-5">
-    <div class="FilterItemsGlobal" data-data-source="its"
-         data-metric="its_closers" data-filter="countries"
-         data-legend="false" data-limit="10" data-order-by="its_closed"></div>
-    <i>
-      <b>Closers per country (aggregated)</b>
-      <a href="notes.html#note:charts:countries:closers"><img src="qm_15.png"></a>
-    </i>
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="its"
+         data-metrics="its_closed,its_closers" data-filter="countries"
+         data-order-by="its_closed"></div>
   </div>
-  <!-- end closers -->
-
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="its"
+	   data-order-by="its_closed" data-filter="countries"></div>
+    </div>
+  </div>
+  
 </div>
-<!-- end tickets closed, closers per companies -->
+<!-- end commits per company -->
 
-<!-- companies list -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-order-by="its_closed"
-       data-filter="countries" data-data-source="its"></div>
-</div>
-<!-- end countries list -->
-
-<!-- countries charts -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-metrics="its_closed,its_closers"
-       data-filter="countries" data-order-by="its_closed"
-       data-data-source="its"></div>
-</div>
-<!-- end countries charts -->
 
 
       <!-- END SECTION  HTML-->
 
+      <footer>
+        <div id="Footer"></div>
+      </footer>
     </div>
-    <footer>
-      <div id="Footer"></div>
-    </footer>
     
     <!-- Bootstrap core JavaScript
          ================================================== -->

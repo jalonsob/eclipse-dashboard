@@ -27,10 +27,7 @@
             "companies-summary",
             "projects",
             "repos"
-	],
-    "extra": [
-        ["Companies integrated report", "companies.html"]
-    ]
+	]
     },
     "releases":["5y"]
 }

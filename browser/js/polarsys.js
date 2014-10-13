@@ -26,9 +26,6 @@ var Polarsys = {};
 
 (function() {
 
-    var sonar_json = "data/json/tools.cdt-sonar-prj-static.json";
-    var grimoirelib_json = "data/json/tools.cdt-grimoirelib-prj-static.json";
-    var pmi_json = "data/json/tools.cdt-pmi-prj-static.json";
     var sonar_metrics = null;
     var grimoirelib_metrics = null;
     var pmi_metrics = null;
@@ -57,7 +54,6 @@ var Polarsys = {};
         return html;
     }
 
-    
     // Quick hack to show metrics with some design inside Bootstrap
     function displayMetric(name, description, value) {
         metric = metrics_to_grimoirelib[name];
@@ -102,6 +98,7 @@ var Polarsys = {};
 
     function convert_boris_json(data) {
         var new_data = {};
+        if (data.children === undefined) return new_data;
         $.each (data.children, function(i, metric) {
             new_data[metric.name] = metric.value;
         });
@@ -109,6 +106,12 @@ var Polarsys = {};
     }
 
     function loadPolarsysMetrics (cb) {
+        project = Report.getParameterByName("project");
+
+        var sonar_json = "data/json/"+project+"-sonar-prj-static.json";
+        var grimoirelib_json = "data/json/"+project+"-grimoirelib-prj-static.json";
+        var pmi_json = "data/json/"+project+"-pmi-prj-static.json";
+
         $.when($.getJSON(sonar_json),$.getJSON(grimoirelib_json),$.getJSON(pmi_json)
             ).done(function(sonar, grimoirelib, pmi) {
                 sonar_metrics = sonar[0];

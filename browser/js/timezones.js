@@ -81,7 +81,7 @@ var TimeZones = {};
                 div.id = mark + (unique++);
                 var ds = $(this).data('data-source');
                 if (ds === undefined) return;
-                var metric = $(this).data('data-metric');
+                var metric = $(this).data('metric');
                 displayTimeZones(div.id, ds, metric);
             });
         }

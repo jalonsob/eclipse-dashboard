@@ -26,10 +26,10 @@ var TimeZones = {};
 
 (function() {
 
-    var scm_tz, mls_tz;
+    var scm_tz, mls_tz, legend_shown = false;
 
     function displayTimeZones(div, ds, metric) {
-        var data_tz, data;
+        var data_tz, data, show_legend = false;
         if (ds === "scm") {
             data_tz = scm_tz;
         }
@@ -52,10 +52,10 @@ var TimeZones = {};
         data = data_tz[metric];
         graph = "bars";
         title = "Time zones for " + metric;
-        config_metric = {legend1 : {container: "legend"}, show_labels: true};
+        if (legend_shown === false) show_legend = true;
+        config_metric = {legend : {container: "legend"}, show_legend: show_legend};
+        if (show_legend) legend_shown = true;
         Viz.displayBasicChart(div, labels, data, graph, title, config_metric);
-        // Viz.displayBasicChart(div, labels, data, graph, title, config_metric);
-        // $("#"+div).html("<h1>Time ZONES</h1>");
     }
 
     function loadTimeZonesData (cb) {

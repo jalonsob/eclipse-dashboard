@@ -27,7 +27,11 @@
             "companies-summary",
             "projects",
             "repos"
-	]
+	],
+    "extra": [
+        ["LocationTech", "index.html?release=locationtech"],
+        ["Polarsys", "index.html?release=polarsys"]
+    ]
     },
     "releases":["Past 5 years"]
 }

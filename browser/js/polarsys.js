@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2012-2014 Bitergia
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,13 +45,21 @@ var Polarsys = {};
         // Display evolution in time of a metric using the min viz.
         metric = metrics_to_grimoirelib[metric];
         html = '';
+        if (metric !== undefined){
+
         html += ' \
-            <div class="FilterItemMetricsEvol" data-data-source="scm" \
+            <div style="height: 120px; font-size: 70%;"><div class="FilterItemMetricsEvol" data-data-source="scm" \
             data-metrics="'+metric+'" data-min="true" data-frame-time="true" \
             data-legend1="true" data-filter="projects" style="height: 100px;"> \
-            </div> \
+            </div> </div>\
         ';
+        }
         return html;
+    }
+
+    function format_number(value){
+        var aux = Math.round(value * 100) / 100;
+        return aux.toLocaleString();
     }
 
     // Quick hack to show metrics with some design inside Bootstrap
@@ -61,33 +69,32 @@ var Polarsys = {};
             description = Report.getAllMetrics()[metric].desc;
         // Temporal hack
         description = description.replace("aggregating all branches","");
-        html = ' \
-              <div class="well"> \
-                <div class="row thin-border"> \
-                  <div class="col-md-12">' + name + '</div> \
-                </div> \
-                <div class="row grey-border"> \
-                  <div class="col-md-12 medium-fp-number">'+value+'</span> \
-                  </div> \
-                </div> \
-               <div style="height: 120px; font-size: 70%;">'+displayVizEvol(name)+'</div> \
-               <div style="font-size: 80%;">'+description+'</div> \
-              </div> \
+        html = '<tr> \
+               <td>' + name + '</td><td class="small-fp-number">' + format_number(value) + '\
+               '+displayVizEvol(name)+' \
+               <div style="font-size: 80%;">'+description+'</div></td> \
+              </tr> \
         ';
         return html;
     }
 
     function displayPolarsysMetrics(div) {
-        html = "";
+        html = '<span class="row">';
         $.each(metrics, function(id, mgroup){
             if (mgroup === null) return;
-            html += '<div class="col-md-3">';
+            if (id === 'community_metrics'){
+                return true; //jumps to next iteration
+            }
+            html += '<div class="col-md-4">';
             html += "<h2>"+id+"</h2>";
+            html += '<table class="table table-striped">';
             $.each(mgroup, function(metric, value){
                 html += displayMetric(metric,"",value);
             });
+            html += '</table>';
             html += '</div>';
         });
+        html += '</span>';
         $("#"+div).html(html);
         // We need to convert the viz
         item = Report.getParameterByName("project");
@@ -123,7 +130,7 @@ var Polarsys = {};
                 metrics.usage_metrics = pmi_metrics;
                 cb();
         }).fail(function() {
-            alert("Can't read Polarys JSON files. Review: " + 
+            alert("Can't read Polarys JSON files. Review: " +
                     sonar_json + " " + grimoirelib_json + " " + pmi_json);
         });
     }

@@ -30,7 +30,8 @@
 	],
     "extra": [
         ["LocationTech", "index.html?release=locationtech"],
-        ["Polarsys", "index.html?release=polarsys"]
+        ["Polarsys", "index.html?release=polarsys"],
+        ["Companies Table", "companies.html"]
     ]
     },
     "releases":["Past 5 years"]

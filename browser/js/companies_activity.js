@@ -167,6 +167,7 @@ var CompaniesActivity = {};
         var years = getActiveYears();
         var metrics = getActiveMetrics();
         var table = "<div>";
+        var totals = [];
         table += "<table id='"+id+"' class='table table-hover'>";
         table += "<thead>";
         // First columns should be pos, name
@@ -192,6 +193,7 @@ var CompaniesActivity = {};
             item = activity['name'][i];
             // Specific for companies but easy to change
             table += "<td><a href='company.html?company="+item+"'>"+item+"</a></td>";
+            var j = 0;
             $.each(activity, function(key, value) {
                 if (key === "name") return;
                 metric = key.split("_")[0];
@@ -200,10 +202,18 @@ var CompaniesActivity = {};
                 if ($.inArray(metric, metrics)>-1 && 
                         $.inArray(year, years)>-1) {
                     table += "<td>"+value[i]+"</td>";
+                    if (totals[j] === undefined) {totals[j] = 0;}
+                    totals[j] += value[i];
+                    j++;
                 }
             });
             table += "</tr>";
         }
+        table += "<tr><td colspan=2>Total</td>";
+        for (var i = 0; i<totals.length; i++) {
+            table += "<td>"+totals[i]+"</td>";
+        }
+        table += "</tr>";
         table += "</table>";
         table += "</div>";
         return table;

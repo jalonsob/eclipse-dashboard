@@ -29,7 +29,7 @@ var CompaniesActivity = {};
     var activity_json = "data/json/companies-activity.json";
     var activity = null;
     var default_metrics = ['commits']; // defined in HTML
-    var default_years = ['total','2014']; // defined in HTML
+    var default_years = ['all','2014']; // defined in HTML
     var table_id = "companies_activity";
 
     function loadActivity (cb) {
@@ -56,7 +56,7 @@ var CompaniesActivity = {};
             if (key === "name") return;
             metric = key.split("_")[0];
             year = key.split("_")[1];
-            if (year === undefined) year = "total";
+            if (year === undefined) year = "all";
             if ($.inArray(year, years) === -1) years.push(year);
             if ($.inArray(metric, metrics) === -1) metrics.push(metric);
 
@@ -178,7 +178,7 @@ var CompaniesActivity = {};
             if (key === "name") return;
             var metric = key.split("_")[0];
             var year = key.split("_")[1];
-            if (year === undefined) year = "total";
+            if (year === undefined) year = "all";
             if ($.inArray(metric, metrics)>-1 && 
                 $.inArray(year, years)>-1) {
                 table += "<th class='filter-false'>"+key+"</th>";
@@ -198,10 +198,12 @@ var CompaniesActivity = {};
                 if (key === "name") return;
                 metric = key.split("_")[0];
                 year = key.split("_")[1];
-                if (year === undefined) year = "total";
+                if (year === undefined) year = "all";
                 if ($.inArray(metric, metrics)>-1 && 
                         $.inArray(year, years)>-1) {
-                    table += "<td>"+value[i]+"</td>";
+                    table += "<td>"+value[i];
+                    if (metric.indexOf("percent")>-1) {table += " %";}
+                    table += "</td>";
                     if (totals[j] === undefined) {totals[j] = 0;}
                     totals[j] += value[i];
                     j++;

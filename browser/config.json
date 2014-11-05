@@ -1,0 +1,45 @@
+{
+    "data-sources": [
+        "scm", 
+        "its", 
+        "mls", 
+        "scr"
+    ], 
+    "end_date": "2014-11-05", 
+    "period": "months", 
+    "project_info": {
+        "blog_url": "", 
+        "date": "", 
+        "irc_name": "", 
+        "irc_type": "", 
+        "irc_url": "", 
+        "its_name": "Tickets", 
+        "its_type": "", 
+        "its_url": "'https://bugs.eclipse.org", 
+        "mediawiki_name": "", 
+        "mediawiki_type": "", 
+        "mediawiki_url": "", 
+        "mls_name": "Mailing lists", 
+        "mls_type": "", 
+        "mls_url": "/mnt/mailman_archives/rmf-dev.mbox/rmf-dev.mbox", 
+        "producer": "Automator", 
+        "project_name": "Eclipse", 
+        "project_url": "", 
+        "scm_name": "", 
+        "scm_type": "git", 
+        "scm_url": "", 
+        "scr_name": "", 
+        "scr_type": "", 
+        "scr_url": "http://gerrit-local.eclipse.org", 
+        "sibyl_name": "", 
+        "sibyl_type": "", 
+        "sibyl_url": ""
+    }, 
+    "reports": [
+        "repositories", 
+        "companies", 
+        "people", 
+        "projects"
+    ], 
+    "start_date": "2001-01-01"
+}

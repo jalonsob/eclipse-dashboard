@@ -12047,6 +12047,8 @@ cd(b):dd(b,typeof c=="number"?[c,c,c,c]:c)}function c(b){return dd(b,a)}if(!argu
     $.Gridster = fn;
 
 }(jQuery, window, document));
+vizjslib_git_revision='184b2f96424cdc0e71f4208e0d3258a106fa3165';
+vizjslib_git_tag='2.1.3-139-g184b2f9';
 /* 
  * Copyright (C) 2012 Bitergia
  *
@@ -12372,6 +12374,7 @@ if (Loader === undefined) var Loader = {};
     var check_companies = false, check_repos = false, check_countries = false;
     var ds_not_supported_company_top = ['scr','irc','mediawiki'];
     var ds_supporting_top_repos = ['scm','mls','its']; //filter by repo in contributors panel
+    var all_data; // Support for loading all data in one JSON file
 
     /**
      This two functionsa are used to push methods to an array of callbacks. That
@@ -12384,7 +12387,10 @@ if (Loader === undefined) var Loader = {};
     Loader.data_ready_global = function(callback) {
         data_global_callbacks.push(callback);
     };
-    //
+
+    Loader.set_all_data = function(data) {
+        all_data = data;
+    };
 
     function fillProjectInfo(data, dir) {
         if (data.project_name === undefined) {
@@ -12395,6 +12401,9 @@ if (Loader === undefined) var Loader = {};
         projects_data[data.project_name] = {dir:dir,url:data.project_url};
     }
 
+    /**
+     * Main function that starts all data loading activity
+     */
     Loader.data_load = function() {
         // If we have a config file just load what is configured
         if (Report.getConfig() !== null &&
@@ -12412,6 +12421,7 @@ if (Loader === undefined) var Loader = {};
                     function(data, self) {Report.setMarkers(data);});
         }
 
+        // Old feature not well maintained
         // Multiproject not tested with config.json
         var projects_dirs = Report.getProjectsDirs();
         for (var i=0;  i<projects_dirs.length; i++) {
@@ -12423,12 +12433,13 @@ if (Loader === undefined) var Loader = {};
         // Loads also the project hierarchy
         data_load_file(Report.getProjectsHierarchyFile(), Report.setProjectsHierarchy);
 
-	// Loads the side menu elements
-	data_load_file(Report.getMenuElementsFile(), Report.setMenuElements);
+        // Loads the side menu elements
+        data_load_file(Report.getMenuElementsFile(), Report.setMenuElements);
 
         data_load_file(Report.getVizConfigFile(),
                 function(data, self) {Report.setVizConfig(data);});
 
+        // Common metrics
         data_load_metrics_definition();
         data_load_metrics();
         data_load_tops('authors');
@@ -12437,6 +12448,7 @@ if (Loader === undefined) var Loader = {};
         data_load_demographics();
         data_load_markov_table();
 
+        // Per filter metrics
         if (Report.getConfig() !== null && Report.getConfig().reports !== undefined) {
             var active_reports = Report.getConfig().reports;
             if ($.inArray('companies', active_reports) > -1) data_load_companies();
@@ -12461,6 +12473,7 @@ if (Loader === undefined) var Loader = {};
 
     // Load just one file to viz it in a div
     Loader.get_file_data_div = function (file, cb, div) {
+        // First check cache 
         $.when($.getJSON(file)).done(function(history) {
             cb (div, file, history);
         }).fail(function() {
@@ -12468,7 +12481,28 @@ if (Loader === undefined) var Loader = {};
         });
     };
 
+    function get_data_from_all(file, fn_data_set, self) {
+        all_data_found = false;
+        /** If we have already all data, just use it */
+        if (all_data) {
+            file_no_path = file.replace(Report.getDataDir()+"/","");
+            data = all_data[file_no_path];
+            if (data) {
+                fn_data_set(data, self);
+                end_data_load();
+                all_data_found = true;
+            } else {
+                if (window.console) {
+                    Report.log("Can't find in " + Report.all_json_file + " " +file);
+                }
+            }
+        }
+        return all_data_found;
+    }
+
     function data_load_file(file, fn_data_set, self) {
+        if (get_data_from_all(file, fn_data_set, self)) return;
+
         /**
            If file is fetched via HTTP then it executes the fn_data_set
            function with the data
@@ -12582,7 +12616,10 @@ if (Loader === undefined) var Loader = {};
     function data_load_tops(metric) {
         var data_sources = Report.getDataSources();
         $.each(data_sources, function(i, DS) {
-            var file_all = DS.getTopDataFile(); 
+            var file_all = DS.getTopDataFile();
+
+            if (get_data_from_all(file_all, DS.setGlobalTopData, DS)) return;
+
             $.when($.getJSON(file_all)).done(function(history) {
                 DS.setGlobalTopData(history);
                 end_data_load();
@@ -12961,6 +12998,20 @@ if (Loader === undefined) var Loader = {};
         var file = DS.getDataDir() + "/people-"+upeople_id+"-"+DS.getName();
         var file_evo = file + "-evolutionary.json";
         var file_static = file + "-static.json";
+        // Check data already available
+        if (all_data) {
+            file_evo_no_path = file_evo.replace(Report.getDataDir()+"/","");
+            file_static_no_path = file_static.replace(Report.getDataDir()+"/","");
+            data_evo = all_data[file_evo_no_path];
+            data_static = all_data[file_static_no_path];
+            if (data_evo && data_static) {
+                DS.addPeopleMetricsData(upeople_id, data_evo, DS);
+                DS.addPeopleGlobalData(upeople_id, data_static, DS);
+                if (Loader.check_people_item(upeople_id)) cb(upeople_id);
+                return;
+            }
+        }
+
         $.when($.getJSON(file_evo),$.getJSON(file_static)
             ).done(function(evo, global) {
             DS.addPeopleMetricsData(upeople_id, evo[0], DS);
@@ -13003,6 +13054,23 @@ if (Loader === undefined) var Loader = {};
         // scr, irc, mediawiki not supported yet
         else return;
         file_top += ".json";
+
+        // Try to load the data from the all json file
+        if (all_data) {
+            file_no_path = file_top.replace(Report.getDataDir()+"/","");
+            data = all_data[file_no_path];
+            if (data) {
+                if (filter === "companies") DS.addCompanyTopData(item, data);
+                else if (filter === "repos") DS.addRepositoryTopData(item, data);
+
+                if (Loader.check_item (item, filter, optional_filter)) {
+                    if (!cb.called_item) cb(filter);
+                    cb.called_item = true;
+                }
+                return;
+            }
+        } 
+
         $.when($.getJSON(file_top)).done(function(top) {
             if (filter === "companies") {
                 DS.addCompanyTopData(item, top);
@@ -13074,26 +13142,27 @@ if (Loader === undefined) var Loader = {};
         file += DS.getName() + "-" + getFilterSuffix(filter);
         var file_evo = file +"-evolutionary.json";
         var file_static = file +"-static.json";
-        $.when($.getJSON(file_evo),$.getJSON(file_static)
-                ).done(function(evo, global) {
-            if (filter === "repos") {
-                DS.addRepoMetricsData(item, evo[0], DS);
-                DS.addRepoGlobalData(item, global[0], DS);
-            } else if (filter === "companies") {
-                DS.addCompanyMetricsData(item, evo[0], DS);
-                DS.addCompanyGlobalData(item, global[0], DS);
-            } else if (filter === "countries") {
-                DS.addCountryMetricsData(item, evo[0], DS);
-                DS.addCountryGlobalData(item, global[0], DS);
-            } else if (filter === "domains") {
-                DS.addDomainMetricsData(item, evo[0], DS);
-                DS.addDomainGlobalData(item, global[0], DS);
-            } else if (filter === "projects") {
-                DS.addProjectMetricsData(item, evo[0], DS);
-                DS.addProjectGlobalData(item, global[0], DS);
-            }
 
-        }).always(function() {
+        function addData(item, evo, global, DS) {
+            if (filter === "repos") {
+                DS.addRepoMetricsData(item, evo, DS);
+                DS.addRepoGlobalData(item, global, DS);
+            } else if (filter === "companies") {
+                DS.addCompanyMetricsData(item, evo, DS);
+                DS.addCompanyGlobalData(item, global, DS);
+            } else if (filter === "countries") {
+                DS.addCountryMetricsData(item, evo, DS);
+                DS.addCountryGlobalData(item, global, DS);
+            } else if (filter === "domains") {
+                DS.addDomainMetricsData(item, evo, DS);
+                DS.addDomainGlobalData(item, global, DS);
+            } else if (filter === "projects") {
+                DS.addProjectMetricsData(item, evo, DS);
+                DS.addProjectGlobalData(item, global, DS);
+            }
+        }
+
+        function check_data() {
             // Check all items for a page
             if (page !== null) {
                 if (Loader.check_filter_page (page, filter)) {
@@ -13136,6 +13205,25 @@ if (Loader === undefined) var Loader = {};
                     }
                 }
             }
+        }
+
+        if (all_data) {
+            file_evo_no_path = decodeURIComponent(file_evo.replace(Report.getDataDir()+"/",""));
+            file_static_no_path = decodeURIComponent(file_static.replace(Report.getDataDir()+"/",""));
+            data_evo = all_data[file_evo_no_path];
+            data_static = all_data[file_static_no_path];
+            if (data_evo && data_static) {
+                addData(item, data_evo, data_static, DS);
+                check_data();
+                return;
+            }
+        }
+
+        $.when($.getJSON(file_evo),$.getJSON(file_static)
+                ).done(function(evo, global) {
+            addData(item, evo[0], global[0], DS);
+        }).always(function() {
+            check_data();
         });
     };
 
@@ -13696,7 +13784,733 @@ var DataProcess = {};
         });
         return new_data;
     };
-})(); /* 
+})();/* 
+ * Copyright (C) 2012-2014 Bitergia
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * This file is a part of the VizGrimoireJS package.
+ *
+ * Authors:
+ *   Luis Cañas-Díaz <lcanas@bitergia.com>
+ */
+
+
+var Utils = {};
+
+(function() {
+
+    Utils.paramsInURL = paramsInURL;
+    Utils.isReleasePage = isReleasePage;
+    Utils.filenameInURL = filenameInURL;
+    Utils.createLink = createLink;
+    Utils.createReleaseLink = createReleaseLink;
+
+    $.urlParam = function(name){
+        var results = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results === null){
+            return null;
+        }
+        else{
+            return results[1] || 0;
+        }
+    };
+
+    function isReleasePage(){
+        /*
+         Returns true if the GET variable release is available.
+
+         Can be improved checking the conf file with the release names, in order
+         to check if the release name is correct.
+         */
+        
+        if ($.urlParam('release') === null) return false;
+        else return true;
+    }
+
+    function paramsInURL(){
+    /*
+     Return raw string with the GET params in the current URL
+     */
+    params = '';    
+    if (document.URL.split('?').length > 1){
+        params = document.URL.split('?')[1];
+    }
+    return params;
+}
+
+    function filenameInURL(){
+        aux = document.URL.split('?')[0].split('/');
+        res = aux[aux.length-1];
+        return res;
+    }
+
+    function createLink(target){
+        /*
+         Return the URL appending the GET variables of the current page
+         */
+        url = target;
+        if (paramsInURL().length > 0) url+= '?' + paramsInURL();
+        return url;
+    }
+
+    function createReleaseLink(target){
+        /*
+         Return the URL appending the GET variable for the release
+         */
+        url = target;
+        if (isReleasePage()) url+= '?release=' + $.urlParam('release');
+        return url;
+    }
+    
+    
+    
+})();
+/*
+ * Copyright (C) 2012-2014 Bitergia
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * This file is a part of the VizGrimoireJS package.
+ * The aim of HTMLComposer is to provide functions where HTML is written in
+ * order to maintain the rest of the code cleaner.
+ *
+ * Authors:
+ *   Luis Cañas-Díaz <lcanas@bitergia.com>
+ */
+
+
+var HTMLComposer = {};
+
+(function() {
+    HTMLComposer.personDSBlock = personDSBlock;
+    HTMLComposer.filterDSBlock = filterDSBlock;
+    HTMLComposer.DSBlock = DSBlock;
+    HTMLComposer.DSBlockProject = DSBlockProject;
+    HTMLComposer.repositorySummaryTable = repositorySummaryTable;
+    HTMLComposer.personSummaryTable = personSummaryTable;
+    HTMLComposer.personName = personName;
+    HTMLComposer.itemName = itemName;
+    HTMLComposer.sideMenu4Release = sideMenu4Release;
+    HTMLComposer.releaseSelector = releaseSelector;
+    HTMLComposer.sideBarLinks = sideBarLinks;
+    HTMLComposer.overallSummaryBlock = overallSummaryBlock;
+    HTMLComposer.smartLinks = smartLinks;
+
+    function personDSBlock(ds_name, metric_name){
+        /* Display block with PersonSummary and PersonMetrics divs.
+         This block is used in the people.html page
+         */
+        var html = '<div class="col-md-12">';
+        html += '<div class="well well-small">';
+        html += '<div class="row">';
+	html += '<div class="col-md-12">';
+	html += '<p>' + title4DS(ds_name) + '</p>';
+	html += '</div>';
+	html += '<div class="col-md-3">';
+	html += '<div class="PersonSummary" data-data-source="'+ ds_name +'"></div>';
+	html += '</div>';
+	html += '<div class="col-md-9">';
+	html += '<div class="PersonMetrics" data-data-source="'+ds_name+'"';
+        html += 'data-metrics="'+metric_name+'" data-min="true"';
+	//html += 'style="height: 140px;" data-frame-time="true"></div>';
+        html += 'data-frame-time="true"></div>';
+	html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        return html;
+    }
+
+/*    function repositoryDSBlock(ds_name, metric_names){
+        return filterDSBlock(ds_name, 'repos', metric_names);
+    }
+
+    function companyDSBlock(ds_name, metric_names){
+        return filterDSBlock(ds_name, 'companies', metric_names);
+    }*/
+
+    function filterDSBlock(ds_name, filter_name, metric_names){
+        /*
+         Display block with FilterItemSummary and FilterItemMetricsEvol
+         for a filter (repository, company, country), data source and
+         the metrics included in metric_names
+
+         Used for div class RepositoryDSBlock
+         */
+
+        /*FilterItemTop was not included in this function. It is not working
+         on the current dash so I disable it.*/
+
+        var html = '<div class="col-md-12">';
+        html += '<div class="row">';
+        html += '<div class="col-md-3">';
+        html += '<div class="well">';
+        html += '<div class="FilterItemSummary" data-data-source="'+ ds_name +'" data-filter="'+ filter_name +'"></div>';
+        html += '</div></div>';
+        html += '<div class="col-md-9">';
+        html += '<div class="well">';
+
+        $.each(metric_names, function(id, metric){
+            html += '<div class="row"><div class="col-md-12"></br></br></div></div>';
+            html += '<div class="row">';
+            html += '<div class="col-md-12">';
+            html += '<div class="FilterItemMetricsEvol" data-data-source="'+ ds_name +'"';
+            html += 'data-metrics="'+ metric +'" data-min="true"';
+            html += 'data-filter="'+ filter_name +'" data-frame-time="true"></div>';
+            html += '</div></div>';
+        });
+
+        html += '</div></div></div></div>';
+
+        return html;
+    }
+
+    function repositorySummaryTable(ds, global_data, id_label){
+        /*
+         Compose the HTML shown in the repository.html for the table with
+         total data for the repository
+
+         Input:
+         - global_data: object with global data for ds from static.json files
+         - ds: data source object
+         */
+        /*var html = '<p class="subsection-title"">' + title4DS(ds.getName()) + '</p>';*/
+        var html = "<table class='table-condensed table-hover'>";
+        html += '<tr><td colspan="2"><p class="subsection-title">' + title4DS(ds.getName()) + '</p></td></tr>';
+        var html_irow = '<tr><td>';
+        var html_erow = '</td></tr>';
+        $.each(global_data,function(id,value) {
+            if (ds.getMetrics()[id]) {
+                html += html_irow + ds.getMetrics()[id].name;
+                if (id === 'first_date' || id === 'last_date'){
+                    html += '</td><td class="numberInTD">' + value + html_erow;
+                }
+                else{
+                    html += '</td><td class="numberInTD">' + Report.formatValue(value) + html_erow;
+                }
+            } else if (id_label[id]) {
+                html += html_irow + id_label[id];
+                                if (id === 'first_date' || id === 'last_date'){
+                    html += '</td><td class="numberInTD">' + value + html_erow;
+                }
+                else{
+                    html += '</td><td class="numberInTD">' + Report.formatValue(value) + html_erow;
+                }
+            }
+        });
+        html += "</table>";
+        return html;
+    }
+
+    function personSummaryTable(ds_name, history){
+        /* Compose table with first activity, last activity and total units for
+         a given data source.
+         */
+        var html = "<table class='table-condensed table-hover'>";
+        html += "<tr><td>";
+        html += "First contribution: </br>";
+        html += "&nbsp;&nbsp;" + history.first_date;
+        html += "</td></tr><tr><td>";
+        html += "Last contribution: </br>";
+        html += "&nbsp;&nbsp;" + history.last_date;
+        html += "</td></tr><tr><td>";
+        if (ds_name == "scm") html += "Commits:</br>&nbsp;&nbsp;" + history.scm_commits;
+        else if (ds_name == "its") html += "Closed:</br>&nbsp;&nbsp;" + history.its_closed;
+        else if (ds_name == "mls") html += "Sent:</br>&nbsp;&nbsp;" + history.mls_sent;
+        else if (ds_name == "irc") html += "Sent:</br>&nbsp;&nbsp;" + history.irc_sent;
+        else if (ds_name == "scr") html += "Closed:</br>&nbsp;&nbsp;" + history.scr_closed;
+        html += "</td></tr>";
+        html += "</table>";
+
+        return html;
+    }
+
+    function personName(name, email){
+        var html = '<p class="section-title" style="margin-bottom:0px;"><i class="fa fa-user fa-lg"></i> &nbsp;&nbsp;';
+        if (name.length > 0)
+            html += name;
+        else if (email.length > 0){
+            /* we don't want to expose the mail address of people!*/
+            if (email.indexOf('@') > 0)
+                email = email.split('@')[0];
+            html += email;
+        }
+        html += '</p>';
+
+        return html;
+    }
+
+    function itemName(text, filter_name){
+        /* Return html title name for filters like repository, company and domain */
+
+        //FIXME: replace the public awful name for this
+        var html = '<p class="section-title" style="margin-bottom:0px;">';
+        if (filter_name === 'companies')
+            html += '<i class="fa fa-building-o"></i> &nbsp;&nbsp;';
+        html += text;
+        html += '</p>';
+        return html;
+    }
+
+    //
+    // Below this point, private methods
+    //
+
+    function title4DS(ds_name){
+        /* Returns title for section based on ds_name. It includes the
+         correspondant font awesome icon for the data source
+         */
+        var title = '';
+        if (ds_name === "scm")
+            title = '<i class="fa fa-code"></i> Source Code Management';
+        else if(ds_name === "scr")
+            title = '<i class="fa fa-check"></i> Source Code Review';
+        else if(ds_name === "its")
+            title = '<i class="fa fa-ticket"></i> Issue tracking system';
+        else if(ds_name === "mls")
+            title = '<i class="fa fa-envelope-o"></i> Mailing Lists';
+        else if(ds_name === "irc")
+            title = '<i class="fa fa-comment-o"></i> IRC Channels';
+        else if(ds_name === "mediawiki")
+            title = '<i class="fa fa-pencil-square-o"></i> Wiki';
+        else if(ds_name === "releases")
+            title = '<i class="fa fa-umbrella"></i> Forge Releases';
+        return title;
+    }
+
+    function sideMenu4Release(){
+        /* Returns HTML for release side menu
+         */
+        html = '';
+        params = '?data_dir='+ $.urlParam('data_dir') +'&release=' + $.urlParam('release');
+        html += '<li><a href="./"><i class="fa fa-home"></i> Home</a></li>';
+        //html += '<li><a href="./release.html'+ params +'"> ' +$.urlParam('release') +' release</a></li>';
+        html += '<li><a href="./scm-companies.html'+ params +'"><i class="fa fa-code"></i> Source code repositories by companies</a></li>';
+        html += '<li><a href="./mls-companies.html' + params + '"><i class="fa fa-envelope-o"></i> Mailing Lists by companies</a></li>';
+        html += '<li><a href="./its-companies.html' + params + '"><i class="fa fa-ticket"></i> Tickets by companies</a></li>';
+
+        return html;
+    }
+
+    function releaseSelector(current_release, release_names){
+        /*
+         Compose HTML for dropdown selector for releases
+
+         current_release: value of GET variable release
+         release_names: releases set up in config file
+         */
+
+        // if no releases, we don't print HTML
+        if(release_names.length === 0) return '';
+
+        // sections which don't support releases
+        unsupported =  ['irc.html','qaforums.html','project.html'];
+
+        ah_label = '&nbsp;All history&nbsp;';
+        label = current_release;
+        if (label === null) {
+            label = ah_label;
+        }
+        else {
+            // Support [label,url] format
+            label = decodeURIComponent(label);
+            if (release_names[0] instanceof Array) {
+                $.each(release_names, function(pos, data) {
+                    if (data[1] === label) {
+                        label = '&nbsp; ' + data[0] + ' release &nbsp;';
+                        return false;
+                    }
+                });
+            }
+            else {
+                label = '&nbsp; ' + label[0].toUpperCase();
+                label += label.substring(1) + ' release &nbsp;';
+            }
+            release_names.reverse().push(ah_label);
+            release_names.reverse();
+        }
+
+        html = '<div class="input-group-btn">';
+        html += '<button type="button" class="btn btn-default btn-lg btn-releaseselector dropdown-toggle"';
+        html += 'data-toggle="dropdown">';
+        html += label;
+        html += '<span class="caret"></span>';
+        html += '</button>';
+        html += '<ul class="dropdown-menu pull-left">';
+        page_name = Utils.filenameInURL();
+        if (unsupported.indexOf(page_name) < 0){
+            $.each(release_names, function(id, value){
+                var final_p = [];
+                params = Utils.paramsInURL().split('&');
+                //we filter the GET values
+                for (var i = 0; i < params.length; i++){
+                    sub_value = params[i];
+                    if (sub_value.length === 0) continue;
+                    //for All History we skip the release value
+                    if (sub_value.indexOf('release') === 0){
+                        if (value != ah_label) final_p.push('release='+value);
+                    }else{
+                        final_p.push(sub_value);
+                    }
+                }
+    
+                //if release is not present we add it
+                if ($.urlParam('release') === null){
+                    // Support [label,url] format
+                    if (value instanceof Array) {
+                        final_p.push('release=' + value[1]);
+                    }
+                    else {
+                        final_p.push('release=' + value);
+                    }
+                }
+    
+                if (value === ah_label){
+                    html += '<li><a href="'+ page_name +'?'+ final_p.join('&');
+                    html += +'" data-value="'+value+'">  '+value+'</a></li>';
+                } else {
+                    html += '<li><a href="'+ page_name +'?'+ final_p.join('&');
+                    if (value instanceof Array) {
+                        // Support [label,url] format
+                        html += '" data-value="'+value[1]+'">  '+ value[0]+'</a></li>';
+                    } else {
+                        html += '" data-value="'+value+'">  ';
+                        html += value[0].toUpperCase() + value.substring(1)+' release</a></li>';
+                    }
+                }
+            });
+        } else {
+            html += '<li><i>No releases for this section</i></li>';
+        }
+        html += '</ul>';
+        html += '</div>';
+
+        return html;
+    }
+
+    function DSBlock(ds_name,box_labels,box_metrics,ts_metrics){
+        /* Display block with functions DSSummaryBox and DSSummaryTimeSerie.
+
+         Receives strings for box_labels,box_metrics,ts_metrics
+
+         Note: This block is used in the index.html page
+         */
+
+        html = '';
+        html += '<!-- irc -->';
+        html += '<div class="row invisible-box">';
+
+        //summary box here
+        blabels = box_labels.split(',');
+        bmetrics = box_metrics.split(',');
+        html += DSSummaryBox(ds_name, blabels, bmetrics, false);
+
+        html += '<div class="col-md-5">';
+        tsm = ts_metrics.split(',');
+        html += DSTimeSerie(ds_name, tsm[0], false);
+        html += '</div>';
+
+        html += '<div class="col-md-5">';
+        html += DSTimeSerie(ds_name, tsm[1], false);
+        html += '</div>';
+
+        html += '</div>';
+        html += '<!-- end irc -->';
+
+        return html;
+
+
+    }
+
+    function DSBlockProject(ds_name,box_labels,box_metrics,ts_metrics,pname){
+        /* Display block with functions DSSummaryBox and DSSummaryTimeSerie.
+
+         Receives strings for box_labels,box_metrics,ts_metrics, pname
+
+         Note: This block is used in the project.html page
+         */
+
+         html = '';
+         html += '<!-- irc -->';
+         html += '<div class="row invisible-box">';
+
+         //summary box here
+         blabels = box_labels.split(',');
+         bmetrics = box_metrics.split(',');
+         html += DSSummaryBox(ds_name, blabels, bmetrics, true);
+
+         html += '<div class="col-md-5">';
+         tsm = ts_metrics.split(',');
+         html += DSTimeSerie(ds_name, tsm[0], true);
+         html += '</div>';
+
+         html += '<div class="col-md-5">';
+         html += DSTimeSerie(ds_name, tsm[1], true);
+         html += '</div>';
+
+         html += '</div>';
+         html += '<!-- end irc -->';
+
+         return html;
+     }
+
+
+    function summaryCell(width, label, ds_name, metric, project_flag){
+        /* Compose small cell used by the DS summary box*/
+        if (project_flag){
+            widget_name = 'ProjectData';}
+        else{
+            widget_name = 'GlobalData';}
+        html = '';
+        html += '<div class="col-xs-'+ width+'">';
+        html += '<div class="row thin-border">';
+        html += '<div class="col-md-12">' + label + '</div>';
+        html += '</div>';
+        html += '<div class="row">';
+        html += '<div class="col-md-12 medium-fp-number">';
+        target_page = Utils.createLink(ds_name + '.html');
+        if (project_flag){
+            html += '<span class="'+ widget_name +'"';
+            html += 'data-data-source="' + ds_name + '" data-field="' + metric + '"></span>';
+        }else{
+            html += '<a href="'+ target_page +'"> <span class="'+ widget_name +'"';
+            html += 'data-data-source="' + ds_name + '" data-field="' + metric + '"></span>';
+            html += '</a>';
+        }
+        html += '</div>';
+        html += '</div>';
+	html += '</div>';
+        return html;
+
+    }
+    function DSSummaryBox(ds_name, labels, metrics, project_flag){
+        /* Compose HTML for DS summary box.
+
+         ds_name: string
+         labels: array of strings
+         metrics: array of strings
+         */
+
+        if (project_flag){
+            widget_name = 'ProjectData';
+        }
+        else {
+            widget_name = 'GlobalData';
+        }
+
+        html = '';
+        html += '<!-- summary box-->';
+        html += '<div class="col-md-2">';
+        html += '<div class="well well-small">';
+        html += '<div class="row thin-border">';
+        html += '<div class="col-md-12">' + labels[0] + '</div>';
+        html += '</div>';
+        html += '<div class="row grey-border">';
+        html += '<div class="col-md-12 big-fp-number">';
+        target_page = Utils.createLink(ds_name + '.html');
+        /* we overwrite this for the forge */
+        if (ds_name === 'releases') target_page = Utils.createLink('forge.html');
+        if (project_flag){
+            html += '<span class="' + widget_name + '"';
+            html += 'data-data-source="' + ds_name + '" data-field="' + metrics[0]+ '"></span>';
+        }
+        else{
+            html += '<a href="' + target_page +'"> <span class="' + widget_name + '"';
+            html += 'data-data-source="' + ds_name + '" data-field="' + metrics[0]+ '"></span>';
+            html += '</a>';
+        }
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="row" style="padding: 5px 0px 0px 0px;">';
+
+        if (labels.length === 2 && metrics.length === 2){
+            html += summaryCell('12', labels[1], ds_name, metrics[1], project_flag);
+        } else if (labels.length === 3 && metrics.length === 3){
+            html += summaryCell('6', labels[1], ds_name, metrics[1], project_flag);
+            html += summaryCell('6', labels[2], ds_name, metrics[2], project_flag);
+        } else if (labels.length === 4 && metrics.length === 4){
+            html += summaryCell('4', labels[1], ds_name, metrics[1], project_flag);
+            html += summaryCell('4', labels[2], ds_name, metrics[2], project_flag);
+            html += summaryCell('4', labels[3], ds_name, metrics[3], project_flag);
+        }
+
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<!-- end summary box -->';
+        return html;
+
+    }
+
+    function DSTimeSerie(ds_name, metric, project_flag){
+        /*
+         ds_name: string
+         metric: string
+         */
+        if (project_flag){
+            ts_widget_name = 'FilterItemMetricsEvol';
+            trend_widget_name = 'FilterItemMicrodashText';
+            filter_name = 'projects';
+        }
+        else{
+            ts_widget_name = 'MetricsEvol';
+            trend_widget_name = 'MicrodashText';
+            filter_name = '';
+        }
+
+        html = '';
+        html += '<div class="well well-small">';
+        html += '<div class="' + ts_widget_name + '" data-data-source="'+ ds_name +'"';
+        html += ' data-filter="'+ filter_name+'"';
+        if (project_flag){
+            html += ' data-frame-time="true"';
+        }
+        html += ' data-metrics="' + metric +'" data-min="true" style="height: 100px;"';
+        html += ' data-light-style="true"></div>';
+        if (project_flag){
+            html += ' <span class="' + trend_widget_name + '"';
+            html += ' data-filter="'+ filter_name+'"';
+            html += ' data-metric="' + metric+ '"></span>';
+        }
+        else{
+            html += '<a href="'+ ds_name + '.html" style="color: black;">';
+            html += ' <span class="' + trend_widget_name + '"';
+            html += ' data-filter="'+ filter_name+'"';
+            html += ' data-metric="' + metric+ '"></span>';
+            html += '</a>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function sideBarLinks(icon_text, title, ds_name, elements){
+        // text = {'companies': '<i class="fa fa-building-o"></i> Companies',
+        // 'companies-summary': '<i class="fa fa-building-o"></i> Companies summary',
+        // 'contributors': '<i class="fa fa-users"></i> Contributors',
+        // 'countries': '<i class="fa fa-flag"></i> Countries',
+        // 'domains': '<i class="fa fa-envelope-square"></i> Domains',
+        // 'projects': '<i class="fa fa-rocket"></i> Projects',
+        // 'repos': '<i class="fa fa-code-fork"></i> Repositories',
+        // 'states': '<i class="fa fa-code-fork"></i> States'};
+        // html = '';
+        // html += '<li><a href="' + ds_name + '.html"><i class="fa fa-tachometer"></i> Overview</a></li>';
+        text = {'companies': 'Companies',
+                'companies-summary': 'Companies summary',
+                'contributors': 'Contributors',
+                'countries': 'Countries',
+                'domains': 'Domains',
+                'projects': 'Projects',
+                'repos': 'Repositories',
+                'tags': 'Tags',
+                'states': 'States'};
+        html = '';
+        html += '<li class="dropdown">';
+        html += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
+        html += '<i class="fa ' + icon_text + '"></i>&nbsp;' + title + ' <b class="caret"></b></a>';
+        html += '<ul class="dropdown-menu navmenu-nav">';
+        var target_page = Utils.createLink(ds_name +'.html');
+        html += '<li><a href="' + target_page + '">&nbsp;Overview</a></li>';
+        $.each(elements, function(id,value){
+            target_page = Utils.createLink(ds_name + '-' + value + '.html');
+            if (text.hasOwnProperty(value)){
+                var label = text[value];
+                if (value === 'repos'){
+                    var DS = Report.getDataSourceByName(ds_name);
+                    label = DS.getLabelForRepositories();
+                    label = label.charAt(0).toUpperCase() + label.slice(1);
+                }
+                html += '<li><a href="'+ target_page + '">&nbsp;' + label + '</a></li>';
+            }else{
+                html += '<li><a href="'+ target_page + '">&nbsp;' + value + '</a></li>';
+            }
+        });
+        html += '</ul></li>';
+        return html;
+    }
+
+    function overallSummaryBlock(){
+        html = '';
+        html += '<!-- summary bar -->';
+        html += '<div class="capped-box overall-summary ">';
+        html += '<div class="stats-switcher-viewport js-stats-switcher-viewport">';
+        html += '<div class="row numbers-summary">';
+        html += '<div class="col-xs-3"><a href="'+ Utils.createReleaseLink('scm.html') +'"><span class="GlobalData" ';
+        html += 'data-data-source="scm" data-field="scm_commits"></span></a> commits</div>';
+        html += '<div class="col-xs-3"><a href="'+ Utils.createReleaseLink('scm.html') +'"><span class="GlobalData" ';
+        html += 'data-data-source="scm" data-field="scm_authors"></span></a> developers ';
+        html += '</div>';
+        html += '<div class="col-xs-3"><a href="'+ Utils.createReleaseLink('its.html') +'"><span class="GlobalData" ';
+        html += 'data-data-source="its" data-field="its_opened"></span></a> tickets</div>';
+        html += '<div class="col-xs-3"><a href="'+ Utils.createReleaseLink('mls.html') +'"><span class="GlobalData" ';
+        html += 'data-data-source="mls" data-field="mls_sent"></span></a> mail messages ';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<!-- end of summary bar -->';
+
+        return html;
+    }
+
+    function smartLinks(target_page, label){
+        /*
+         Compose a link checking if the section is enabled and the release
+         */
+        html = '';
+        link_exists = false;
+
+        try {
+            //scm-repos.html, scr-companies.html, ...
+            fname = target_page.split('.')[0];
+            section = fname.split('-')[0];
+            subsection = fname.split('-')[1];
+
+            var mele = Report.getMenuElements();
+            if ( mele[section].indexOf(subsection) >= 0)
+                link_exists = true; // section is enabled
+
+            if(Utils.isReleasePage() && link_exists){
+                link_to = Utils.createReleaseLink(target_page);
+                html = '<a href="' + link_to + '">' + label + '</a>';
+            }else if (link_exists){
+                html = '<a href="' + target_page + '">' + label + '</a>';
+            }else{
+                html = label;
+            }
+        }catch(err){
+            html = label;
+        }
+        return html;
+    }
+
+})();
+ /*
  * Copyright (C) 2013-2014 Bitergia
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13739,7 +14553,7 @@ Convert.convertMicrodashText = function () {
             var html = '<div class="row">';
 
             if(show_name){ //if name is shown we'll have four columns
-                html += '<div class="col-md-3">';
+                html += '<div class="col-xs-3">';
                 html += '<span class="dayschange">' + ds.basic_metrics[metric].name + '</span>';
                 html += '</div>';
             }
@@ -13767,9 +14581,9 @@ Convert.convertMicrodashText = function () {
                 }
 
                 if(show_name){
-                    html += '<div class="col-md-3">';
+                    html += '<div class="col-xs-3">';
                 }else{
-                    html += '<div class="col-md-4">';
+                    html += '<div class="col-xs-4">';
                 }
 
                 html += '<span class="dayschange">Last '+period+' days:</span>';
@@ -13781,7 +14595,7 @@ Convert.convertMicrodashText = function () {
                 } else if (netvalue < 0) {
                     html += '<i class="fa fa-arrow-circle-down"></i> <span class="negpercent">&nbsp;'+str_percentagevalue+'%</span>&nbsp;';
                 }
-                html += '</div><!--col-md-4-->';
+                html += '</div><!--col-xs-4-->';
             });
 
             html += '</div><!--row-->';
@@ -13859,14 +14673,14 @@ function compareProjectTitles(a, b){
 }
 
 function getParentProjects(project_id, hierarchy){
-    /** 
+    /**
         Gets the parent project based on the hierarchy
     **/
     var parent = [];
     var iterate_p = project_id;
     var parent_id = '';
     var aux = {};
-    
+
     while (hierarchy[iterate_p].hasOwnProperty('parent_project')){
         parent_id = hierarchy[iterate_p].parent_project;
         aux = hierarchy[parent_id];
@@ -13874,7 +14688,7 @@ function getParentProjects(project_id, hierarchy){
         parent.push(aux);
         iterate_p = parent_id;
     }
-    //parent.push(hierarchy[parent_id]);        
+    //parent.push(hierarchy[parent_id]);
     return parent.reverse();
 }
 
@@ -13896,17 +14710,35 @@ function getChildrenProjects(project_id, hierarchy){
     return children;
 }
 
-function composePBreadcrumbsHTMLlast(project_id, children, hierarchy){   
+function composePBreadcrumbsHTMLlast(project_id, children, hierarchy){
     var html = '';
     var clen = children.length;
     if(clen > 0){
+        // Sort subprojects alphabetically: children array
+        children_sort = [];
+        children_names = []; // To be sorted
+        $.each(children, function(id,value){
+            children_names.push(value.title);
+        });
+        children_names = children_names.sort();
+        $.each(children_names, function(id, name){
+            $.each(children, function(id,value){
+                if (name === value.title) {
+                    children_sort.push(value);
+                    return false;
+                }
+            });
+        });
+        children = children_sort;
+        // end sorting
+
         html += '<li class="dropdown">';
         html += '<span data-toggle="tooltip" title="Project name"> ' + getProjectTitle(project_id, hierarchy) + '</span>';
         html += '&nbsp;<a class="dropdown-toggle" data-toggle="dropdown" href="#">';
         html += '<span data-toggle="tooltip" title="Select subproject" class="badge"> ' + clen + ' Subprojects </span></a>';
         html += '<ul class="dropdown-menu scrollable-menu">';
         $.each(children, function(id,value){
-            gchildren = getChildrenProjects(value.project_id, hierarchy);            
+            gchildren = getChildrenProjects(value.project_id, hierarchy);
             if (gchildren.length > 0){
                 html += '<li><a href="project.html?project='+ value.project_id +'">'+ value.title +'&nbsp;&nbsp;<span data-toggle="tooltip" title="Number of suprojects" class="badge">'+gchildren.length +'&nbsp;<i class="fa fa-rocket"></i></span></a></li>';
             }else{
@@ -13924,7 +14756,7 @@ function composePBreadcrumbsHTMLlast(project_id, children, hierarchy){
 }
 
 function composeProjectBreadcrumbs(project_id) {
-    /** 
+    /**
         compose the project navigation bar based on the hierarchy
     **/
     var html = '<ol class="breadcrumbtitle">';
@@ -13933,7 +14765,7 @@ function composeProjectBreadcrumbs(project_id) {
         // we don't have information about subprojects
         return '';
     }
-    
+
     if (project_id === undefined){
         project_id = 'root';
     }
@@ -13958,13 +14790,16 @@ function escapeString(string){
     var aux = '';
     aux = string.replace(' ','_');
     aux = aux.toLowerCase();
-    return aux;        
+    return aux;
 }
 
 function composeHTMLNestedProjects(project_id, children, hierarchy){
     var html = '';
     var clen = children.length;
+    /*
     var epid = escapeString(project_id);
+    */
+    var epid = project_id; // See error #4208
     if(clen > 0){
 	html += '<li>';
 	html += '<a href="project.html?project='+epid+'">'+ getProjectTitle(project_id, hierarchy) + '</a>';
@@ -13983,7 +14818,7 @@ function composeHTMLNestedProjects(project_id, children, hierarchy){
 }
 
 function composeProjectMap() {
-    /** 
+    /**
         compose the project navigation bar based on the hierarchy
     **/
     var html = '<ul>';
@@ -13992,7 +14827,7 @@ function composeProjectMap() {
         // we don't have information about subprojects
         return '';
     }
-    
+
     project_id = 'root';
     var children = getChildrenProjects(project_id, hierarchy);
     var parents = getParentProjects(project_id, hierarchy);
@@ -14004,9 +14839,44 @@ function composeProjectMap() {
     return html;
 }
 
+function getSectionName4Release(){
+    /*
+     This function bypass some of the conditions of getSectionName. It should
+     be deprecated as soon as we generate the same data for releases (the same
+     data we have for the normal dash)
+     */
+    var result = [];
+    var sections = {"data_sources":"Data sources",
+                    "project_map":"Project map",
+                    "people":"Contributor",
+                    "company":"Company",
+                    "country":"Country",
+                    "domain":"Domain",
+                    "scm-companies":"Activity on code repositories by companies",
+                    "mls-companies":"Activity on mailing lists by companies",
+                    "its-companies":"Activity on issue trackers by companies"
+                   };
+    url_no_params = document.URL.split('?')[0];
+    url_tokens = url_no_params.split('/');
+    var section = url_tokens[url_tokens.length-1].split('.')[0];
+    if (section === 'project' || section === 'index' || section === 'release' || section === ''){
+        //no sections are support for subprojects so far
+        return [];
+    }else{
+        if (sections.hasOwnProperty(section)){
+            result.push([section, sections[section]]);
+        }else{
+            return [['#','Unavailable section name']];
+        }
+        return result;
+    }
 
+}
 
 function getSectionName(){
+    /*
+     Return array with section name and section title
+     */
     var result = [];
     var sections = {"mls":"MLS overview",
                     "irc":"IRC overview",
@@ -14015,13 +14885,17 @@ function getSectionName(){
                     "scr":"Code Review overview",
                     "scm":"SCM overview",
                     "wiki":"Wiki overview",
+                    "downloads":"Downloads",
+                    "forge":"Forge releases",
+                    "demographics":"Demographics",
+                    "data_sources":"Data sources",
+                    "project_map":"Project map",
                     "people":"Contributor",
                     "company":"Company",
                     "country":"Country",
                     "domain":"Domain",
-                    "repository":"Repository",
-                    "data_sources":"Data sources",
-                    "project_map":"Project map"};
+                    "release":"Companies analysis by release"
+                   };
     var filters = {"companies":"Activity by companies",
                    "contributors":"Activity by contributors",
                    "countries":"Activity by companies",
@@ -14029,9 +14903,13 @@ function getSectionName(){
                    "projects":"Activity by project",
                    "repos":"Activity by repositories",
                    "states":"Activity by states",
-                   "tags":"Activity by tags"};
+                   "tags":"Activity by tags"
+                  };
+    var filters2 = {"repository":"Repository",
+                   };
 
-    var url_tokens = document.URL.split('/');
+    url_no_params = document.URL.split('?')[0];
+    url_tokens = url_no_params.split('/');
     var section = url_tokens[url_tokens.length-1].split('.')[0];
     if (section === 'project' || section === 'index' || section === ''){
         //no sections are support for subprojects so far
@@ -14041,12 +14919,25 @@ function getSectionName(){
         //it could be scm or scm-repos
 
         var s_tokens = section.split('-');
+
+        //we generate the navigation hierarchy repository pages
+        if (s_tokens[0] === 'repository'){
+            ds_name = $.urlParam('ds');
+            s_tokens = [ds_name,'repos','repository'];
+        }
+
         if (sections.hasOwnProperty(s_tokens[0])){
             result.push([s_tokens[0], sections[s_tokens[0]]]);
 
             if (s_tokens.length > 0){
                 if (filters.hasOwnProperty(s_tokens[1])){
-                result.push([s_tokens[0], filters[s_tokens[1]]]);
+                result.push([s_tokens[0] + '-' + s_tokens[1], filters[s_tokens[1]]]);
+
+                    if (s_tokens.length > 2){
+                        if (filters2.hasOwnProperty(s_tokens[2])){
+                            result.push([s_tokens[0], filters2[s_tokens[2]]]);
+                        }
+                    }
                 }
             }
         }else{
@@ -14056,47 +14947,15 @@ function getSectionName(){
     }
 }
 
-function composeSBSectionLinks(icon_text, title, ds_name, elements){
-    // text = {'companies': '<i class="fa fa-building-o"></i> Companies',
-    // 'companies-summary': '<i class="fa fa-building-o"></i> Companies summary',
-    // 'contributors': '<i class="fa fa-users"></i> Contributors',
-    // 'countries': '<i class="fa fa-flag"></i> Countries',
-    // 'domains': '<i class="fa fa-envelope-square"></i> Domains',
-    // 'projects': '<i class="fa fa-rocket"></i> Projects',
-    // 'repos': '<i class="fa fa-code-fork"></i> Repositories',
-    // 'states': '<i class="fa fa-code-fork"></i> States'};
-    // html = '';
-    // html += '<li><a href="' + ds_name + '.html"><i class="fa fa-tachometer"></i> Overview</a></li>';
-    text = {'companies': 'Companies',
-    'companies-summary': 'Companies summary',
-    'contributors': 'Contributors',
-    'countries': 'Countries',
-    'domains': 'Domains',
-    'projects': 'Projects',
-    'repos': 'Repositories',
-    'tags': 'Tags',
-    'states': 'States'};
-    html = '';
-    html += '<li class="dropdown">';
-    html += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
-    html += '<i class="fa ' + icon_text + '"></i>&nbsp;' + title + ' <b class="caret"></b></a>';
-    html += '<ul class="dropdown-menu navmenu-nav">';
-    html += '<li><a href="' + ds_name + '.html">&nbsp;Overview</a></li>';
-    $.each(elements, function(id,value){        
-	if (text.hasOwnProperty(value)){
-            var label = text[value];
-            if (value === 'repos'){
-                var DS = Report.getDataSourceByName(ds_name);
-                label = DS.getLabelForRepositories();
-                label = label.charAt(0).toUpperCase() + label.slice(1);
-            }
-            html += '<li><a href="'+ ds_name + '-' + value + '.html">&nbsp;' + label + '</a></li>';
-	}else{
-            html += '<li><a href="'+ ds_name + '-' + value + '.html">&nbsp;' + value + '</a></li>';
-	}
-    });
-    html += '</ul></li>';
-    return html;
+function isURLRelease(){
+    /*
+     Returns true when the URL received contains the values for a release
+
+     COMMENT: dup with Utils.isReleasePage()
+     */
+    if ( $.urlParam('release') !== null &&
+         $.urlParam('release').length > 0) return true;
+    else return false;
 }
 
 function composeSideBar(project_id){
@@ -14108,79 +14967,95 @@ function composeSideBar(project_id){
     html += '<ul class="nav navmenu-nav">';
 
     var mele = Report.getMenuElements();
-
-    html += '<li><a href="./"><i class="fa fa-home"></i> Home</a></li>';
+    /*html += '<li><a href="' + Utils.createLink('index.html') + '">';
+    html += '<i class="fa fa-home"></i> Home</a></li>';*/
 
     if (project_id === 'root'){
-
-	if (mele.hasOwnProperty('scm')){
+        if (mele.hasOwnProperty('scm')){
             aux = mele.scm;
-            aux_html = composeSBSectionLinks('fa-code','Source code management','scm', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-code','Source code management','scm', aux);
             html += aux_html;
-	}
-	if (mele.hasOwnProperty('scr')){
+        }
+        if (mele.hasOwnProperty('scr')){
             aux = mele.scr;
-            aux_html = composeSBSectionLinks('fa-check','Code review','scr', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-check','Code review','scr', aux);
             html += aux_html;
-	}
-	if (mele.hasOwnProperty('its')){
+        }
+        if (mele.hasOwnProperty('its')){
             aux = mele.its;
-            aux_html = composeSBSectionLinks('fa-ticket','Tickets','its', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-ticket','Tickets','its', aux);
             html += aux_html;
-	}
-	if (mele.hasOwnProperty('mls')){
+        }
+        if (mele.hasOwnProperty('mls')){
             aux = mele.mls;
-            aux_html = composeSBSectionLinks('fa-envelope-o','Mailing lists','mls', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-envelope-o','Mailing lists','mls', aux);
             html += aux_html;
-	}	
-        if (mele.hasOwnProperty('qaforums')){
+        }
+        if (mele.hasOwnProperty('qaforums') && Utils.isReleasePage() === false){
             aux = mele.qaforums;
-            aux_html = composeSBSectionLinks('fa-question','Q&A Forums','qaforums', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-question','Q&A Forums','qaforums', aux);
             html += aux_html;
         }
-        if (mele.hasOwnProperty('irc')){
+        if (mele.hasOwnProperty('irc') && Utils.isReleasePage() === false){
             aux = mele.irc;
-            aux_html = composeSBSectionLinks('fa-comment-o','IRC','irc', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-comment-o','IRC','irc', aux);
             html += aux_html;
         }
-        if (mele.hasOwnProperty('downloads')){
+        if (mele.hasOwnProperty('downloads') && Utils.isReleasePage() === false){
             aux = mele.downloads;
-            aux_html = composeSBSectionLinks('fa-download','Downloads','downloads', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-download','Downloads','downloads', aux);
             html += aux_html;
         }
-        if (mele.hasOwnProperty('wiki')){
+        if (mele.hasOwnProperty('forge') && Utils.isReleasePage() === false){
+            aux = mele.forge;
+            aux_html = HTMLComposer.sideBarLinks('fa-umbrella','Forge releases','forge', aux);
+            html += aux_html;
+        }
+        if (mele.hasOwnProperty('wiki') && Utils.isReleasePage() === false){
             aux = mele.wiki;
-            aux_html = composeSBSectionLinks('fa-pencil-square-o','Wiki','wiki', aux);
+            aux_html = HTMLComposer.sideBarLinks('fa-pencil-square-o','Wiki','wiki', aux);
             html += aux_html;
         }
-        if (mele.hasOwnProperty('studies')){
+        if (mele.hasOwnProperty('studies') && Utils.isReleasePage() === false){
             aux = mele.studies;
             html += '<li class="dropdown">';
             html += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
             html += '<i class="fa fa-lightbulb-o"></i>&nbsp;Studies <b class="caret"></b></a>';
             html += '<ul class="dropdown-menu navmenu-nav">';
             if (aux.indexOf('demographics') >= 0){
-            html += '<li><a href="demographics.html">&nbsp;Demographics</a></li>';
+                html += '<li><a href="demographics.html">&nbsp;Demographics</a></li>';
+            }
+            if (aux.indexOf('release') >= 0){
+                //we link by the default the latest release (first in the list)
+                aux = Report.getReleaseNames().reverse();
+                latest_release = aux[0];
+                html += '<li><a href="release.html?release='+ latest_release +'">&nbsp;Companies by release</a></li>';
             }
             html += '</ul></li>';
         }
-    }
-    /*else{
-        html += '<li class="active"><a href="#">' + getSectionName() + '</a></li>';
-    }*/
-    html += '<li><a href="data_sources.html"><i class="fa fa-database"></i> Data sources</a></li>';
-    html += '<li><a href="project_map.html"><i class="fa fa-icon fa-sitemap"></i> Project map</a></li>';
 
-    if (mele.hasOwnProperty('extra')){
-        aux = mele.extra;
-        html_extra += '<li class="sidemenu-divider"></li>';
-        html_extra += '<li class="sidemenu-smallheader">More links:</li>';
-        $.each(aux, function(id,value){
-            html_extra += '<li><a href="'+ value[1]+'">&nbsp;' + value[0] + '</a></li>';
-        });
+        if (Utils.isReleasePage()===true){
+            current_release = $.urlParam('release');
+            html += '<li><a href="data_sources.html?release=' + current_release
+                    +'"><i class="fa fa-database"></i> Data sources</a></li>';
+            html += '<li><a href="project_map.html?release=' + current_release
+                    +'"><i class="fa fa-icon fa-sitemap"></i> Project map</a></li>';
+        }else{
+            html += '<li><a href="data_sources.html"><i class="fa fa-database"></i> Data sources</a></li>';
+            html += '<li><a href="project_map.html"><i class="fa fa-icon fa-sitemap"></i> Project map</a></li>';
+        }
+
+        if (mele.hasOwnProperty('extra')){
+            aux = mele.extra;
+            html_extra += '<li class="sidemenu-divider"></li>';
+            html_extra += '<li class="sidemenu-smallheader">More links:</li>';
+            $.each(aux, function(id,value){
+                html_extra += '<li><a href="'+ value[1]+'">&nbsp;' + value[0] + '</a></li>';
+            });
+        }
+        html += html_extra;
     }
 
-    html += html_extra;
     html += '</ul>';
     return html;
 }
@@ -14195,7 +15070,7 @@ Convert.convertSideBar = function(project_id){
             //project_id will be empty for root project
             var label;
             if(project_id){
-                label = Report.cleanLabel(project_id); 
+                label = Report.cleanLabel(project_id);
             }
             var htmlaux = composeSideBar(label);
             $("#"+div.id).append(htmlaux);
@@ -14205,8 +15080,10 @@ Convert.convertSideBar = function(project_id){
             //if (data.title) document.title = data.title;
             //$(".report_date").text(data.date);
             $(".report_name").text(data.project_name);
+            if(Utils.isReleasePage())
+                $(".report_name").attr("href", "./?release=" + $.urlParam('release'));
         });
-    }    
+    }
 };
 
 Convert.convertProjectNavBar = function (project_id){
@@ -14218,12 +15095,12 @@ Convert.convertProjectNavBar = function (project_id){
             //project_id will be empty for root project
             var label;
             if(project_id){
-                label = Report.cleanLabel(project_id); 
+                label = Report.cleanLabel(project_id);
             }
             var htmlaux = composeProjectBreadcrumbs(label);
             $("#"+div.id).append(htmlaux);
         });
-    }    
+    }
 };
 
 Convert.convertNavbar = function() {
@@ -14231,12 +15108,13 @@ Convert.convertNavbar = function() {
         $("#Navbar").html(navigation);
         var project_id = Report.getParameterByName("project");
         Convert.convertProjectNavBar(project_id);
+        Convert.convertReleaseSelector();
         Convert.convertSideBar(project_id);
         /**
-         // Could this break the support of different JSON directories?         
+         // Could this break the support of different JSON directories?
            displayReportData();
         Report.displayActiveMenu();
-        var addURL = Report.addDataDir(); 
+        var addURL = Report.addDataDir();
         if (addURL) {
             var $links = $("#Navbar a");
             $.each($links, function(index, value){
@@ -14247,21 +15125,52 @@ Convert.convertNavbar = function() {
     });
 };
 
+Convert.convertReleaseSelector = function (){
+    var releases = Report.getReleaseNames();
+    if (releases.length > 0){       // if no releases, we don't print HTML
+        var divs = $(".ReleaseSelector");
+        if (divs.length > 0){
+            $.each(divs, function(id, div){
+                $(this).empty();
+                if (!div.id) div.id = "ReleaseSelector" + getRandomId();
+                var htmlaux = HTMLComposer.releaseSelector($.urlParam('release'), releases);
+                $("#"+div.id).append(htmlaux);
+            });
+        }
+    }
+
+};
+
+
 function composeSectionBreadCrumb(project_id){
+    /*
+     Returns HTML for the breadcrumb shown on top (horizontal) with the section
+     names
+     */
     var html = '<ol class="breadcrumb">';
+
     if (project_id === undefined){
         //main project enters here
-        var subsects = getSectionName();
-        if (subsects.length > 0){
-            html += '<li><a href="./">Project Overview</a></li>';
-            var cont = 1;
-            $.each(subsects, function(id,value){
-                if (subsects.length === cont){
+        var subsects_b = getSectionName();
+        var params = Utils.paramsInURL();
+        if (subsects_b.length > 0){
+            html += '<li><a href="./';
+            if(Utils.isReleasePage()) html += '?release=' + $.urlParam('release');
+            html += '">Project Overview</a></li>';
+            var cont_b = 1;
+            $.each(subsects_b, function(id,value){
+                if (subsects_b.length === cont_b){
                     html += '<li class="active">' + value[1] + '</li>';
                 }else{
-                    html += '<li><a href="'+ value[0] +'.html">' + value[1] + '</a></li>';
+                    if(Utils.isReleasePage()){
+                        html += '<li><a href="'+ value[0] +'.html';
+                        html += '?release=' + $.urlParam('release') + '">';
+                        html += value[1] + '</a></li>';
+                    }else{
+                        html += '<li><a href="'+ value[0] +'.html">' + value[1] + '</a></li>';
+                    }
                 }
-                cont += 1;
+                cont_b += 1;
             });
         }
         else{
@@ -14272,6 +15181,7 @@ function composeSectionBreadCrumb(project_id){
         //subprojects have no sections yet
         html += '<li> ' + getSectionName() + '</li>';
     }
+
     html += '</ol>';
     return html;
 }
@@ -14353,21 +15263,25 @@ function composeDropDownRepo(DS){
 
     //FIXME this should be in a method DS.getLabel('repository') or similar
     /*var label_repo = 'repository';
-    if (dsname === 'its'){ 
+    if (dsname === 'its'){
         label_repo = 'tracker';
     }else if (dsname === 'mls'){
         label_repo = 'mailing list';
     }*/
     html = '<ol class="filterbar"><li>Filtered by '+ label_repo +':&nbsp;&nbsp;</li>';
-    html += '<li><div class="dropdown"><button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"> '+ section + ' <span class="caret"></span></button>';
-    html += '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">';
-
+    html += '<li><div class="dropdown"><button class="btn btn-default dropdown-toggle" ';
+    html += 'type="button" id="dropdownMenu1" data-toggle="dropdown"> '+ section + ' ';
+    html += '<span class="caret"></span></button>';
+    html += '<ul class="dropdown-menu scroll-menu" role="menu" aria-labelledby="dropdownMenu1">';
+    //html += '<ul class="dropdown-menu scroll-menu">';
     if (repository){
         html += '<li role="presentation"><a role="menuitem" tabindex="-1" href="'+dsname+'-contributors.html">';
         html += 'All ' + label_repo_plural;
         html +='</a></li>';
     }
-    $.each(DS.getReposData(), function(id, value){
+    var repo_names = DS.getReposData();
+    repo_names.sort();
+    $.each(repo_names, function(id, value){
         if (value === repository) return;
         html += '<li role="presentation"><a role="menuitem" tabindex="-1" href="?repository=';
         html += value;
@@ -14477,6 +15391,7 @@ Convert.convertProjectData = function (){
             DS = Report.getDataSourceByName(ds);
             if (DS === null) return;
             var data = DS.getProjectsGlobalData()[p];
+            if (data === undefined) {return;}
             var key = $(this).data('field');
             $(this).text(Report.formatValue(data[key], key));
         });
@@ -14572,16 +15487,20 @@ function loadHTMLEvolParameters(htmldiv, config_viz){
     } else {
         config_viz.custom_help = "";
     }
+    // Repository filter used to display only certain repos in a chart
+    if ($(htmldiv).data('repo-filter')){
+        config_viz.repo_filter = $(htmldiv).data('repo-filter');
+    }
     // In unixtime
     var start = $(htmldiv).data('start');
     if (start) config_viz.start_time = start;
     var end = $(htmldiv).data('end');
     if (end) config_viz.end_time = end;
-    
-    var remove_last_point = $(htmldiv).data('remove-last-point');
-    if (remove_last_point) config_viz.remove_last_point = true;    
 
-    return config_viz;    
+    var remove_last_point = $(htmldiv).data('remove-last-point');
+    if (remove_last_point) config_viz.remove_last_point = true;
+
+    return config_viz;
 }
 
 Convert.convertMetricsEvol = function() {
@@ -14611,6 +15530,7 @@ Convert.convertMetricsEvol = function() {
             $(this).empty();
             var metrics = $(this).data('metrics');
             var ds = $(this).data('data-source');
+            //FIXME title is duplicated with custom-title
             config_viz.title = $(this).data('title');
             var DS = Report.getDataSourceByName(ds);
             if (DS === null) return;
@@ -14625,6 +15545,50 @@ Convert.convertMetricsEvol = function() {
     }
 };
 
+Convert.convertMetricsEvolCustomized = function(filter) {
+    // General config for metrics viz
+    var config_metric = {};
+
+    config_metric.show_desc = false;
+    config_metric.show_title = true;
+    config_metric.show_labels = true;
+
+    var config = Report.getVizConfig();
+    if (config) {
+        $.each(config, function(key, value) {
+            config_metric[key] = value;
+        });
+    }
+    var div_param = "MetricsEvolCustomized";
+    var divs = $("." + div_param);
+    if (divs.length > 0) {
+        $.each(divs, function(id, div) {
+            // FIXME add check of "repository" var to avoid being executed
+            //if present. See convertMetricsEvolSelector
+            if (filter !== $(this).data('filter')) return;
+            var config_viz = {};
+            $.each(config_metric, function(key, value) {
+                config_viz[key] = value;
+            });
+            $(this).empty();
+            var metrics = $(this).data('metrics');
+            var ds = $(this).data('data-source');
+            //FIXME title is duplicated with custom-title
+            config_viz.title = $(this).data('title');
+            var DS = Report.getDataSourceByName(ds);
+            if (DS === null) return;
+
+            config_viz = loadHTMLEvolParameters(div, config_viz);
+
+            div.id = metrics.replace(/,/g,"-")+"-"+ds+"-metrics-evol-"+this.id;
+            div.id = div.id.replace(/\n|\s/g, "");
+            DS.displayMetricsEvol(metrics.split(","),div.id,
+                    config_viz, $(this).data('convert'));
+        });
+    }
+};
+
+
 Convert.convertMetricsEvolSelector = function() {
     /**
      This function compose the HTML when "repository" GET parameter is passed
@@ -14632,7 +15596,7 @@ Convert.convertMetricsEvolSelector = function() {
      Having this function we avoid slowing down the load of MetricsEvol when
      it is not needed to wait for repository data.
      **/
-    // FIXME: this code and convertMetricsEvol is 90% the same. 
+    // FIXME: this code and convertMetricsEvol is 90% the same.
     var config_metric = {};
 
     config_metric.show_desc = false;
@@ -14659,13 +15623,14 @@ Convert.convertMetricsEvolSelector = function() {
             var DS = Report.getDataSourceByName(ds);
             if (DS === null) return;
             var repository = Report.getParameterByName("repository");
+            config_viz.repo_filter = repository;
 
             config_viz = loadHTMLEvolParameters(div, config_viz);
 
-            div.id = metrics.replace(/,/g,"-")+"-"+ds+"-metrics-evol-"+this.id;
+            div.id = metrics.replace(/,/g,"-")+"-"+ds+"-metrics-evol-"+repository;//this.id;
             div.id = div.id.replace(/\n|\s/g, "");
             DS.displayMetricsEvol(metrics.split(","),div.id,
-                    config_viz, $(this).data('convert'), repository);
+                    config_viz, $(this).data('convert'));
         });
     }
 };
@@ -14690,7 +15655,7 @@ Convert.convertMetricsEvolSet = function() {
             var ds = $(this).data('data-source');
             var DS = Report.getDataSourceByName(ds);
             if (DS === null) return;
-            DS.displayEnvision(div.id, relative, legend, summary_graph); 
+            DS.displayEnvision(div.id, relative, legend, summary_graph);
         });
     }
 };
@@ -14698,7 +15663,7 @@ Convert.convertMetricsEvolSet = function() {
 
 Convert.convertTimeTo = function() {
     var div_tt = "TimeTo";
-    divs = $("."+div_tt); 
+    divs = $("."+div_tt);
     if (divs.length > 0) {
         $.each(divs, function(id, div) {
             $(this).empty();
@@ -14742,7 +15707,7 @@ Convert.convertLastActivity = function() {
         $.each(Report.getDataSources(), function(index, DS) {
             var data = DS.getGlobalData();
             $.each(data, function (key,val) {
-                var suffix = "_"+period; 
+                var suffix = "_"+period;
                 if (key.indexOf(suffix, key.length - suffix.length) !== -1) {
                     var metric = key.substring(0, key.length - suffix.length);
                     label = metric;
@@ -14816,6 +15781,8 @@ Convert.convertPersonMetrics = function (upeople_id, upeople_identifier) {
             if (DS === null) return;
             var metrics = $(this).data('metrics');
             config_metric.show_legend = false;
+            config_metric.help = false;
+            if ($(this).data('frame-time')) config_metric.frame_time = true;
             if ($(this).data('legend')) config_metric.show_legend = true;
             if ($(this).data('person_id')) upeople_id = $(this).data('person_id');
             if ($(this).data('person_name')) upeople_identifier = $(this).data('person_name');
@@ -14848,7 +15815,33 @@ Convert.convertPersonData = function (upeople_id, upeople_identifier) {
                 else name = upeople_id;
                 email = "";
             }
-            $("#"+div.id).append("<h2>"+name + " "+ email + "</h2>");
+            html = HTMLComposer.personName(name, email);
+            $("#"+div.id).append(html);
+        });
+    }
+};
+
+
+Convert.personSummaryBlock = function(upeople_id){
+    /*
+     Two steps conversion:
+     Converts this id into a block with PersonSummary + PersonMetrics
+     */
+    var divs = $(".PersonSummaryBlock");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+
+            ds_name = $(this).data('data-source');
+            metric_name = $(this).data('metrics');
+            DS = Report.getDataSourceByName(ds_name);
+            if (DS === null) return;
+            if (DS.getData().length === 0) return; /* no data for data source*/
+            if (DS.getPeopleMetricsData()[upeople_id].length === 0) return; /* no data for this person */
+            var html = HTMLComposer.personDSBlock(ds_name, metric_name);
+            if (!div.id) div.id = "Parsed" + getRandomId();
+            $("#"+div.id).append(html);
         });
     }
 };
@@ -14885,11 +15878,137 @@ Convert.convertPeople = function(upeople_id, upeople_identifier) {
         return;
     }
 
+    Convert.personSummaryBlock(upeople_id);
     Convert.convertPersonData(upeople_id, upeople_identifier);
     Convert.convertPersonSummary(upeople_id, upeople_identifier);
     Convert.convertPersonMetrics(upeople_id, upeople_identifier);
 
     Convert.activateHelp();
+};
+
+function dataFilterAvailable(filter_name, item_name){
+    /*
+     filter_name: repos, companies, countries and domains
+     item_name: name of the repo, company, etc ..
+
+     Returns true when data is available. False if not available
+     */
+    if (filter_name === 'repos'){
+        if (DS.getReposGlobalData()[item_name] === undefined ||
+            DS.getReposGlobalData()[item_name].length === 0) return false;
+    }else if(filter_name === 'companies'){
+        if (DS.getCompaniesGlobalData()[item_name] === undefined ||
+            DS.getCompaniesGlobalData()[item_name].length === 0) return false;
+    }else if(filter_name === 'countries'){
+        if (DS.getCountriesGlobalData()[item_name] === undefined ||
+            DS.getCountriesGlobalData()[item_name].length === 0) return false;
+    }else if(filter_name === 'companies'){
+        if (DS.getDomainsGlobalData()[item_name] === undefined ||
+            DS.getDomainsGlobalData()[item_name].length === 0) return false;
+    }
+
+    return true;
+}
+
+Convert.repositoryDSBlock = function(repo_id){
+    /*
+     Two steps conversion:
+     Converts this id into a block with FilterItemSummary + FilterItemMetricsEvol.
+     */
+    var divs = $(".FilterDSBlock");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+
+            ds_name = $(this).data('data-source');
+            filter_name = $(this).data('filter');
+            aux = $(this).data('metrics');
+            metric_names = aux.split(',');
+            $.each(metric_names, function(id, value){
+                metric_names[id] = metric_names[id].replace(/:/g,',');
+            });
+            DS = Report.getDataSourceByName(ds_name);
+            if (DS === null) return;
+            if (DS.getData().length === 0) return; /* no data for data source*/
+
+            if (dataFilterAvailable(filter_name, repo_id)){
+                var html = HTMLComposer.filterDSBlock(ds_name, filter_name, metric_names);
+                if (!div.id) div.id = "Parsed" + getRandomId();
+                $("#"+div.id).append(html);
+            }
+        });
+    }
+};
+
+Convert.convertDSSummaryBlock = function(upeople_id){
+    /*
+     Two steps conversion:
+     Converts this id into a block with PersonSummary + PersonMetrics
+     */
+    var divs = $(".DSSummaryBlock");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+
+            ds_name = $(this).data('data-source');
+            box_labels = $(this).data('box-labels');
+            box_metrics = $(this).data('box-metrics');
+            ts_metrics = $(this).data('ts-metrics');
+            //metric_name = $(this).data('metrics');
+            DS = Report.getDataSourceByName(ds_name);
+            if (DS === null) return;
+            if (DS.getData().length === 0) return; /* no data for data source*/
+            var html = HTMLComposer.DSBlock(ds_name,box_labels,box_metrics,
+                                            ts_metrics);
+            if (!div.id) div.id = "Parsed" + getRandomId();
+            $("#"+div.id).append(html);
+        });
+    }
+};
+
+Convert.convertDSSummaryBlockProjectFiltered = function(upeople_id){
+    /*
+     Two steps conversion:
+     Converts this id into a block with PersonSummary + PersonMetrics
+     */
+    var divs = $(".DSSummaryBlockProjectFiltered");
+    var pname = Report.getParameterByName("project");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+
+            ds_name = $(this).data('data-source');
+            box_labels = $(this).data('box-labels');
+            box_metrics = $(this).data('box-metrics');
+            ts_metrics = $(this).data('ts-metrics');
+            //metric_name = $(this).data('metrics');
+            DS = Report.getDataSourceByName(ds_name);
+            if (DS === null) return;
+            if (DS.getProjectsGlobalData()[pname] === undefined) return; /* no data for data source*/
+            if (DS.getProjectsGlobalData()[pname].length === 0) return; /* no data for data source*/
+            //var data = DS.getProjectsGlobalData()[pname];
+            var html = HTMLComposer.DSBlockProject(ds_name,box_labels,box_metrics,
+                                            ts_metrics,pname);
+            if (!div.id) div.id = "Parsed" + getRandomId();
+            $("#"+div.id).append(html);
+        });
+    }
+};
+
+Convert.convertOverallSummaryBlock = function (){
+    var divs = $(".OverallSummaryBlock");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+            var html = HTMLComposer.overallSummaryBlock();
+            if (!div.id) div.id = "Parsed" + getRandomId();
+            $("#"+div.id).append(html);
+        });
+    }
 };
 
 Convert.convertDemographics = function() {
@@ -14951,6 +16070,7 @@ Convert.getRealItem = function(ds, filter, item) {
 
 Convert.convertFilterItemsSummary = function(filter) {
     var divlabel = "FilterItemsSummary";
+    /*watch out! there is FilterItemsSummary and FilterItemSummary!!*/
     divs = $("."+divlabel);
     if (divs.length > 0) {
         $.each(divs, function(id, div) {
@@ -14958,7 +16078,7 @@ Convert.convertFilterItemsSummary = function(filter) {
             DS = Report.getDataSourceByName(ds);
             if (DS === null) return;
             if (filter === undefined) filter = $(this).data('filter');
-            if (filter !== $(this).data('filter')) return;            
+            if (filter !== $(this).data('filter')) return;
             if (!filter) return;
             div.id = ds+"-"+divlabel;
             $(this).empty();
@@ -15156,14 +16276,20 @@ Convert.convertFilterItemsMiniCharts = function(filter, page) {
     }
 };
 
+
 Convert.convertFilterItemData = function (filter, item) {
+    /* FilterItemData displays the title of the panel (strange name BTW)*/
     var divs = $(".FilterItemData");
+    //FIXME: replace this awful name
+
     if (divs.length > 0) {
         $.each(divs, function(id, div) {
             $(this).empty();
             var label = Report.cleanLabel(item);
+            //var ds_name = $.urlParam('ds'); // urlParam is defined in Utils.js
             if (!div.id) div.id = "FilterItemData" + getRandomId();
-            $("#"+div.id).append("<h2>"+label + "</h2>");
+            html = HTMLComposer.itemName(label, filter);
+            $("#"+div.id).append(html);
         });
     }
 };
@@ -15171,6 +16297,7 @@ Convert.convertFilterItemData = function (filter, item) {
 
 Convert.convertFilterItemSummary = function(filter, item) {
     var divlabel = "FilterItemSummary";
+    /*watch out! there is FilterItemsSummary and FilterItemSummary!!*/
     divs = $("."+divlabel);
     if (item !== null && divs.length > 0) {
         $.each(divs, function(id, div) {
@@ -15185,8 +16312,10 @@ Convert.convertFilterItemSummary = function(filter, item) {
             div.id = ds+"-"+filter+"-"+divlabel;
             $(this).empty();
             if (filter === "repos") {
-                real_item = Convert.getRealItem(DS, filter, real_item);
-                if (real_item) DS.displayRepoSummary(div.id, real_item, DS);
+                // Repos map for repository.html page disabled
+                /*real_item = Convert.getRealItem(DS, filter, real_item);
+                if (real_item) DS.displayRepoSummary(div.id, real_item, DS);*/
+                DS.displayRepoSummary(div.id, real_item, DS);
             }
             else if (filter === "countries")
                 DS.displayCountrySummary(div.id, real_item, DS);
@@ -15206,15 +16335,19 @@ Convert.convertFilterItemMicrodashText = function (filter, item) {
     if (divs.length > 0) {
         $.each(divs, function(id, div) {
             $(this).empty();
+            var global_data;
             var real_item = item; // project, repo, company, etc ..
             var metric = $(this).data('metric');
             var show_name = $(this).data('name');
             var ds = Report.getMetricDS(metric)[0];
             if (ds === undefined) return;
-            if (filter === "projects")
-                var global_data = ds.getProjectsGlobalData()[item];
-            else
+            if (filter === "projects") {
+                global_data = ds.getProjectsGlobalData()[item];
+                if (global_data === undefined) {return;}
+            }
+            else {
                 return; //so far only project filter is supported
+            }
             var html = '<div class="row">';
 
             if(show_name){ //if name is shown we'll have four columns
@@ -15287,12 +16420,15 @@ Convert.convertFilterItemMetricsEvol = function(filter, item) {
             div.id += metrics.replace(/,/g,"-")+"-"+ds+"-"+filter+"-"+divlabel;
             $(this).empty();
             if (filter === "repos") {
-                real_item = Convert.getRealItem(DS, filter, real_item);
+                // Repos map for repository.html page disabled
+                /*real_item = Convert.getRealItem(DS, filter, real_item);
                 if (real_item) {
                     DS.displayMetricsRepo(real_item, metrics.split(","),
                             div.id, config_metric);
                 }
-                else $(this).hide();
+                else $(this).hide();*/
+                DS.displayMetricsRepo(real_item, metrics.split(","),
+                    div.id, config_metric);
             }
             else if (filter === "countries") {
                 DS.displayMetricsCountry(real_item, metrics.split(","),
@@ -15341,6 +16477,21 @@ Convert.convertFilterItemTop = function(filter, item) {
     }
 };
 
+Convert.convertSmartLinks = function (){
+    var divs = $(".SmartLinks");
+    if (divs.length > 0){
+        $.each(divs, function(id, div) {
+            /*workaround to avoid being called again when redrawing*/
+            if (div.id.indexOf('Parsed') >= 0 ) return;
+            target_page = $(this).data('target');
+            label = $(this).data('label');
+            var html = HTMLComposer.smartLinks(target_page, label);
+            if (!div.id) div.id = "Parsed" + getRandomId();
+            $("#"+div.id).append(html);
+        });
+    }
+};
+
 
 Convert.convertFilterStudyItem = function (filter, item) {
     // Control convert is not called several times per filter
@@ -15363,13 +16514,14 @@ Convert.convertFilterStudyItem = function (filter, item) {
 
     if (Loader.FilterItemCheck(item, filter) === false) return;
 
+    Convert.repositoryDSBlock(item);
+    Convert.convertDSSummaryBlockProjectFiltered();
     Convert.convertFilterItemData(filter, item);
     Convert.convertFilterItemSummary(filter, item);
     Convert.convertFilterItemMetricsEvol(filter, item);
     Convert.convertFilterItemTop(filter, item);
     Convert.convertFilterItemMicrodashText(filter, item);
     Convert.convertProjectData();
-
     Convert.activateHelp();
 
     Convert.convertMetricsEvolSelector();
@@ -15407,6 +16559,7 @@ Convert.convertFilterStudy = function(filter) {
     // repositories comes from Automator config
     if (filter === "repositories") filter = "repos";
 
+
     // If data is not available load them and cb this function
     if (Loader.check_filter_page (page, filter) === false) {
         $.each(Report.getDataSources(), function(index, DS) {
@@ -15414,6 +16567,7 @@ Convert.convertFilterStudy = function(filter) {
         });
         return;
     }
+
 
     Convert.convertFilterItemsSummary(filter);
     Convert.convertFilterItemsGlobal(filter);
@@ -15439,12 +16593,15 @@ Convert.convertDSTable = function() {
 
 Convert.convertBasicDivs = function() {
     Convert.convertNavbar();
+    Convert.convertSmartLinks();
     //Convert.convertProjectNavBar();
     Convert.convertSectionBreadcrumb();
     Convert.convertProjectMap();
     //Convert.convertModalProjectMap();
-    Convert.convertFooter(); 
+    Convert.convertFooter();
     //Convert.convertRefcard(); //deprecated
+    Convert.convertOverallSummaryBlock();
+    Convert.convertDSSummaryBlock();
     Convert.convertDSTable();
     Convert.convertGlobalData();
     //Convert.convertProjectData();
@@ -15465,10 +16622,37 @@ Convert.convertBasicMetrics = function(config) {
     Convert.convertMarkovTable();
 };
 
+Convert.convertModifiedBasicMetrics = function(filter) {
+    /*
+     The functions call here display the basic charts with more info from repos
+
+     Controls the load of data and put the callback waiting until it's ready.
+     */
+
+    // repositories comes from Automator config
+    var page = 1; // FIXME just to get it work, useless
+
+    // If data is not available load them and cb this function
+    if (Loader.check_filter_page (page, filter) === false) {
+        $.each(Report.getDataSources(), function(index, DS) {
+            if (filter !== "repos") return;
+            if (filter === "repos") total = DS.getReposData().length;
+            for (var i=0;i<total;i++) {
+                var repo = DS.getReposData()[i];
+                Loader.data_load_item(repo, DS, page, Convert.convertModifiedBasicMetrics, filter);
+            }
+
+        });
+        return;
+    }
+    Convert.convertMetricsEvolCustomized(filter);
+};
+
+
 Convert.convertFilterTop = function(filter){
     /**
      Display top tables.
-     If item is provided through URL parameter it waits and display filtered 
+     If item is provided through URL parameter it waits and display filtered
      information, if not it displays total/global information.
      **/
     var item = Report.getParameterByName("repository");
@@ -15476,6 +16660,7 @@ Convert.convertFilterTop = function(filter){
     if (Loader.filterTopCheck(item, filter) === false) return;
     Convert.convertTop();
     Convert.convertRepositorySelector();
+
 };
 
 })();
@@ -15520,10 +16705,11 @@ if (Report === undefined) var Report = {};
     var projects_data = {};
     var projects_datasources = {};
     var repos_map;
-    var project_file = config_dir + "/project-info.json",
-    viz_config_file = data_dir + "/viz_cfg.json",
-    markers_file = data_dir + "/markers.json",
-    repos_map_file = data_dir + "/repos-map.json",
+    Report.all_json_file = data_dir + "/all.json";
+    var project_file = config_dir + "/project-info.json";
+    viz_config_file = data_dir + "/viz_cfg.json";
+    markers_file = data_dir + "/markers.json";
+    repos_map_file = data_dir + "/repos-map.json";
     projects_hierarchy_file = data_dir + "/projects_hierarchy.json";
     menu_elements_file = config_dir + "/menu-elements.json";
     var page_size = 10, page = null;
@@ -15536,6 +16722,7 @@ if (Report === undefined) var Report = {};
     Report.getVizConfig = getVizConfig;
     Report.getProjectsHierarchy = getProjectsHierarchy;
     Report.getMenuElements = getMenuElements;
+    Report.getReleaseNames = getReleaseNames;
     Report.getMetricDS = getMetricDS;
     Report.getGridster = getGridster;
     Report.setGridster = setGridster;
@@ -15619,8 +16806,11 @@ if (Report === undefined) var Report = {};
 
     /** menu_elements contains JSON for side menu**/
     function getMenuElements(){
-	return menu_elements;
+	return menu_elements.menu;
     }
+    function getReleaseNames() {
+        return menu_elements.releases;
+    }    
     Report.setMenuElements = function(data){
 	menu_elements = data;
     };
@@ -15695,6 +16885,11 @@ if (Report === undefined) var Report = {};
         if (item.split("___").length === 2) {
             aux = item.split(" ");
             label = aux[0];
+        }
+        else if (item.lastIndexOf("https:__api.github.com_repos_") === 0) {
+            // github tickets: https:__api.github.com_repos_owncloud_core_issues
+            label = label.replace('https:__api.github.com_repos_', '');
+            label = label.split("_")[1];
         }
         else if (item.lastIndexOf("http") === 0 || item.split("_").length > 3) {
             aux = item.split("_");
@@ -15825,8 +17020,9 @@ if (Report === undefined) var Report = {};
 
     function checkDynamicConfig() {
         var data_sources = [];
-
-        function getDataDirs(dirs_config) {
+        
+        /*
+         function getDataDirs(dirs_config) {
             var full_params = dirs_config.split ("&");
             var dirs_param = $.grep(full_params,function(item, index) {
                 return (item.indexOf("data_dir=") === 0);
@@ -15843,6 +17039,14 @@ if (Report === undefined) var Report = {};
         if (querystr && querystr.indexOf("data_dir")>=0) {
             getDataDirs(querystr);
             if (data_sources.length>0)
+                Report.setProjectsDirs(data_sources);
+        }*/
+        
+        var release = $.urlParam('release');
+        if (release !== null && release.length > 0 ){
+            data_sources.push('data/json/' + release);
+            Report.setDataDir('data/json/' + release);
+            if (data_sources.length>0)                
                 Report.setProjectsDirs(data_sources);
         }
     }
@@ -15992,9 +17196,6 @@ if (Report === undefined) var Report = {};
     };
 
     Report.convertGlobal = function() {
-        // Templates markup divs
-        Convert.convertMicrodash();
-        Convert.convertMicrodashText();
         // Normal markup divs
         Convert.convertBasicDivs();
         Convert.convertBasicDivsMisc();
@@ -16002,6 +17203,9 @@ if (Report === undefined) var Report = {};
         Convert.convertDemographics();
         Convert.convertMetricsEvolSet();
         Convert.convertLastActivity();
+        // Templates markup divs
+        Convert.convertMicrodash();
+        Convert.convertMicrodashText();
     };
 
     Report.getActiveStudies = function() {
@@ -16059,7 +17263,7 @@ Loader.data_ready(function(){
     // but .. are the tops by repos already assigned? -> we need a check
     study = "repos";
     Convert.convertFilterTop(study);
-    Convert.convertModifiedBasicMetrics(study);
+    // Convert.convertModifiedBasicMetrics(study);
 });
 
 Loader.data_ready(function() {
@@ -16083,7 +17287,14 @@ $(document).ready(function() {
             Report.log("Can't read global config file " + filename);
     }).always(function (data) {
         Report.createDataSources();
-        Loader.data_load();
+        $.getJSON(Report.all_json_file, function(data) {
+            if (window.console) {
+                Report.log("Loaded all JSON data from " + Report.all_json_file);
+            }
+            Loader.set_all_data(data);
+        }).always(function (data) {
+            Loader.data_load();        
+        });
         $("body").css("cursor", "progress");
     });
 });
@@ -16991,8 +18202,13 @@ function DataSource(name, basic_metrics) {
             var addURL = null;
             if (Report.addDataDir()) addURL = Report.addDataDir();
             if (show_links) {
+                var release_var = '';
+                if (Utils.isReleasePage()) 
+                    release_var = '&release=' + $.urlParam('release');
+                
                 if (report === "companies") { 
                     list += "<a href='company.html?company="+item;
+                    list += release_var;
                     if (addURL) list += "&"+addURL;
                     list += "'>";
                 }
@@ -17000,21 +18216,26 @@ function DataSource(name, basic_metrics) {
                     list += "<a href='";
                     list += "repository.html";
                     list += "?repository=" + encodeURIComponent(item);
+                    list += release_var;
+                    list += "&ds=" + ds.getName();
                     if (addURL) list += "&"+addURL;
                     list += "'>";
                 }
                 else if (report === "countries") {
                     list += "<a href='country.html?country="+item;
+                    list += release_var;
                     if (addURL) list += "&"+addURL;
                     list += "'>";
                 }
                 else if (report === "domains") {
                     list += "<a href='domain.html?domain="+item;
+                    list += release_var;
                     if (addURL) list += "&"+addURL;
                     list += "'>";
                 }
                 else if (report === "projects") {
                     list += "<a href='project.html?project="+item;
+                    list += release_var;
                     if (addURL) list += "&"+addURL;
                     list += "'>";
                 }
@@ -17099,25 +18320,8 @@ function DataSource(name, basic_metrics) {
     this.displayPeopleSummary = function(divid, upeople_id, 
             upeople_identifier, ds) {
         var history = ds.getPeopleGlobalData()[upeople_id];
-
         if (history === undefined || history instanceof Array) return;
-
-        html = "<h6>" + ds.getTitle() + "</h6>";
-
-        html += "<table class='table-condensed table-hover'>";
-        html += "<tr><td>";
-        html += "Start</td><td>"+history.first_date;
-        html += "</td></tr><tr><td>";
-        html += "End</td><td>"+ history.last_date;
-        html += "</td></tr><tr><td>";
-        if (ds.getName() == "scm") html += "Commits</td><td>" + history.scm_commits;
-        else if (ds.getName() == "its") html += "Closed</td><td>" + history.its_closed;
-        else if (ds.getName() == "mls") html += "Sent</td><td>" + history.mls_sent;
-        else if (ds.getName() == "irc") html += "Sent</td><td>" + history.irc_sent;
-        else if (ds.getName() == "scr") html += "Closed</td><td>" + history.scr_closed;
-        html += "</td></tr>";
-        html += "</table>";
-
+        html = HTMLComposer.personSummaryTable(ds.getName(), history);
         $("#"+divid).append(html);
     };
 
@@ -17149,7 +18353,6 @@ function DataSource(name, basic_metrics) {
 
     this.displaySummary = function(report, divid, item, ds) {
         // Prints all the keys:values for an item
-        // This function is no longer used on the dash
         if (!item) item = "";
         var html = "<h6>" + ds.getTitle()+ "</h6>";
         var id_label = this.getSummaryLabels();
@@ -17167,22 +18370,8 @@ function DataSource(name, basic_metrics) {
         else global_data = ds.getGlobalData();
 
         if (!global_data) return;
-
-        var self = this;
-        html += "<table class='table-condensed table-hover'>";
-        var html_irow = '<tr><td>';
-        var html_erow = '</td></tr>';
-        $.each(global_data,function(id,value) {
-            // if (id_label[id] === undefined) return;
-            if (self.getMetrics()[id]) {
-                html += html_irow + self.getMetrics()[id].name + "</td><td>" + Report.formatValue(value) + html_erow;
-            } else if (id_label[id]) { 
-                html += html_irow + id_label[id] + "</td><td>" + Report.formatValue(value) + html_erow;
-            } /*else {
-                if (report) html += id + "</td><td>" + Report.formatValue(value);
-            }*/
-        });
-        html += "</table>";
+        
+        html = HTMLComposer.repositorySummaryTable(ds, global_data, id_label);
         $("#"+divid).append(html);
     };
 
@@ -17286,7 +18475,7 @@ function DataSource(name, basic_metrics) {
         this.envisionEvo(divid, projects_full_data, relative, legend_show, summary_graph);
     };
 }
-/* 
+/*
  * Copyright (C) 2012-2014 Bitergia
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17395,20 +18584,20 @@ if (Viz === undefined) var Viz = {};
 
     function getTopVarsFromMetric(metric, ds_name){
         //maps the JSON vars with the metric name
-        //FIXME this function should be private        
+        //FIXME this function should be private
         var var_names = {};
         var_names.id = "id";
         if (metric === "senders" && (ds_name === "mls" || ds_name === "irc")){
             var_names.name = "senders";
             var_names.action = "sent";
-        } 
+        }
         if (metric === "authors" && ds_name === "scm"){
             var_names.name = "authors";
             var_names.action = "commits";
         }
         if (metric === "closers" && ds_name === "its"){
             var_names.name = "closers";
-            var_names.action = "closed";            
+            var_names.action = "closed";
         }
         if (ds_name === "scr"){
             if (metric === "mergers"){
@@ -17445,8 +18634,11 @@ if (Viz === undefined) var Viz = {};
                 // the same as in mls and irc
                 var_names.name = "senders";
                 var_names.action = "sent";
-           }          
-        }       
+           }else if (metric === "participants"){
+               var_names.name = "name";
+               var_names.action = "messages_sent";
+           }
+        }
         if (ds_name === "releases"){
             if (metric === "authors"){
                 var_names.name = "username";
@@ -17460,13 +18652,13 @@ if (Viz === undefined) var Viz = {};
     function getSortedPeriods(){
         return ['last month','last year',''];
     }
-    
+
     function composeTopRowsDownloads(dl_data, limit, var_names){
         var rows_html = "";
         for (var j = 0; j < dl_data[var_names.name].length; j++) {
             if (limit && limit <= j) break;
             var metric_value = dl_data[var_names.action][j];
-            rows_html += "<tr><td>#" + (j+1) + "</td>";
+            rows_html += "<tr><td> " + (j+1) + "</td>";
             rows_html += "<td>";
             rows_html += dl_data[var_names.name][j];
             rows_html += "</td>";
@@ -17475,7 +18667,7 @@ if (Viz === undefined) var Viz = {};
         return(rows_html);
     }
 
-    
+
     function composeTopRowsThreads(threads_data, limit, threads_links){
         var rows_html = "";
         for (var i = 0; i < threads_data.subject.length; i++) {
@@ -17511,7 +18703,11 @@ if (Viz === undefined) var Viz = {};
             rows_html += "<tr><td>" + (j+1) + "</td>";
             rows_html += "<td>";
             if (people_links){
-                rows_html += '<a href="people.html?id=' +people_data[var_names.id][j]+ '">';
+                rows_html += '<a href="people.html?id=' +people_data[var_names.id][j];
+                //we spread the GET variables if any
+                get_params = Utils.paramsInURL();
+                if (get_params.length > 0) rows_html += '&' + get_params;
+                rows_html += '">';
                 rows_html += people_data[var_names.name][j] +"</a>";
             }else{
                 rows_html += people_data[var_names.name][j];
@@ -17525,7 +18721,7 @@ if (Viz === undefined) var Viz = {};
     function composeTopTabs(periods, metric, data, ds_name){
         var tabs_html = "";
         var first = true;
-        tabs_html += '<ul id="myTab" class="nav nav-tabs">';          
+        tabs_html += '<ul id="myTab" class="nav nav-tabs">';
         for (var i=0; i< periods.length; i++){
             var mykey = metric + '.' + periods[i];
             if (data[mykey]){
@@ -17575,6 +18771,9 @@ if (Viz === undefined) var Viz = {};
             data_period_formatted = "Last 365 days";
         }
 
+        // If we are watching a release page, we overwrite the title of the table
+        if (Utils.isReleasePage()) data_period_formatted = "Release history";
+
 
         if (tabs === true){
             //title += '<span class="TabTitle">Top ' + desc + '</span>';
@@ -17609,7 +18808,7 @@ if (Viz === undefined) var Viz = {};
         }
 
         title += composeTitle(metric, ds_name, gen_tabs, desc_metrics, selected_period);
-        
+
         if (gen_tabs === true){
             // prints tabs
             tabs += composeTopTabs(periods, metric, data, ds_name);
@@ -17641,10 +18840,23 @@ if (Viz === undefined) var Viz = {};
                     if (metric === "threads"){
                         tables += composeTopRowsThreads(data[key], limit, threads_links);
                     }else if (metric === "packages" || metric === "ips"){
+                        // duplicated code, see next "else"
+                        unit = desc_metrics[ds_name + "_" + metric].action;
+                        //tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th><th>'+unit.capitalize() +'</th></thead><tbody>';
+                        metric_name = desc_metrics[ds_name + "_" + metric].name;
+                        tables += '<thead><th>#</th><th>' +metric_name.capitalize()+'</th>';
+                        if (unit !== undefined) tables += '<th>'+unit.capitalize()+'</th>';
+                        tables += '</thead><tbody>';
+                        // end duplicated code
                         tables += composeTopRowsDownloads(data[key], limit, var_names);
+                        //tables += '</tbody>';
                     }else{
                         unit = desc_metrics[ds_name + "_" + metric].action;
-                        tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th><th>'+unit.capitalize() +'</th></thead><tbody>';
+                        //tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th><th>'+unit.capitalize() +'</th></thead><tbody>';
+                        metric_name = desc_metrics[ds_name + "_" + metric].name;
+                        tables += '<thead><th>#</th><th>' +metric_name.capitalize()+'</th>';
+                        if (unit !== undefined) tables += '<th>'+unit.capitalize()+'</th>';
+                        tables += '</thead><tbody>';
                         tables += composeTopRowsPeople(data[key], limit, people_links, var_names);
                         tables += '</tbody>';
                     }
@@ -17656,13 +18868,21 @@ if (Viz === undefined) var Viz = {};
         }else{
             //tables += '<div class="tab-pane fade'+ html  +'" id="' + metric + data_period_nows + '">';
             tables += '<table class="table table-striped"><tbody>';
-            if (metric === "threads"){                
+            if (metric === "threads"){
                 tables += composeTopRowsThreads(data, limit, threads_links);
             }else if (metric === "packages" || metric === "ips"){
+                // duplicated code, see next "else"
+                unit = desc_metrics[ds_name + "_" + metric].action;
+                tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th>';
+                if (unit !== undefined) tables += '<th>'+unit.capitalize()+'</th>';
+                tables += '</thead><tbody>';
+                // end duplicated code
                 tables += composeTopRowsDownloads(data, limit, var_names);
             }else{
                 unit = desc_metrics[ds_name + "_" + metric].action;
-                tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th><th>'+unit.capitalize()+'</th></thead><tbody>';
+                tables += '<thead><th>#</th><th>' +metric.capitalize()+'</th>';
+                if (unit !== undefined) tables += '<th>'+unit.capitalize()+'</th>';
+                tables += '</thead><tbody>';
                 tables += composeTopRowsPeople(data, limit, people_links, var_names);
                 tables += '</tbody>';
             }
@@ -17685,9 +18905,9 @@ if (Viz === undefined) var Viz = {};
 
     function displayTopMetric
     (div_id, metric, metric_period, history, graph, titles, limit, people_links) {
-        // 
+        //
         // this function is being replaced
-        // 
+        //
         var top_metric_id = metric.name;
         if (!history || $.isEmptyObject(history)) return;
         var metric_id = metric.action;
@@ -17737,7 +18957,7 @@ if (Viz === undefined) var Viz = {};
         }
     }
 
-    function displayDataSourcesTable(div){        
+    function displayDataSourcesTable(div){
         dsources = Report.getDataSources();
         html = '<table class="table table-striped">';
         html += '<thead><th>Data Source</th><th>From</th>';
@@ -17768,7 +18988,7 @@ if (Viz === undefined) var Viz = {};
             html += '<td>' + last_date + '</td></tr>';
             });
         html += '</tbody></table>';
-        $(div).append(html);      
+        $(div).append(html);
     }
 
     function showHelp(div_id, metrics, custom_help) {
@@ -17790,7 +19010,7 @@ if (Viz === undefined) var Viz = {};
             content = "<strong>Description</strong>: " + custom_help;
         }
 
-        help += 'data-content="'+content+'" data-html="true">'; 
+        help += 'data-content="'+content+'" data-html="true">';
         help += '<img src="qm_15.png"></a>';
         // Remove previous "?" so we don't duplicate
         var old_help =$('#'+div_id).prev()[0];
@@ -17817,7 +19037,7 @@ if (Viz === undefined) var Viz = {};
                 mdata[i] = [history.id[i], history[metric][i]];
             });
             var label = metric;
-            if (Report.getAllMetrics()[metric]) 
+            if (Report.getAllMetrics()[metric])
                 label = Report.getAllMetrics()[metric].name;
             lines_data.push({label:label, data:mdata});
         });
@@ -17845,14 +19065,14 @@ if (Viz === undefined) var Viz = {};
             $.each(data[metric], function (i, value) {
                 mdata[i] = [data.id[i] , data[metric][i]];
             });
-            lines_data.push({label:item, data:mdata});            
+            lines_data.push({label:item, data:mdata});
             aux = data;
         });
         displayDSLines(div_id, aux, lines_data, title, config);
     }
 
 
-    function displayMetricSubReportLines(div_id, metric, items, title, 
+    function displayMetricSubReportLines(div_id, metric, items, title,
             config, start, end, convert, order) {
         var lines_data = [];
         var history = {};
@@ -17993,19 +19213,19 @@ if (Viz === undefined) var Viz = {};
 
     function dropLastLineValue(history, lines_data){
         // If there are several lines, just remove last value
-        // Removed because not useful if last data is not fresh        
+        // Removed because not useful if last data is not fresh
         if (lines_data.length === 0) return lines_data;
         if (lines_data.length>1) {
             for (var j=0; j<lines_data.length; j++) {
                 var last = lines_data[j].data.length - 1;
                 lines_data[j].data[last][1] = undefined;
             }
-        }        
+        }
     }
 
     // Last value is incomplete. Change it to a point.
     function lastLineValueToPoint(history, lines_data) {
-        
+
         if (lines_data.length !== 1) return lines_data;
         var last = lines_data[0].data.length;
 
@@ -18020,7 +19240,7 @@ if (Viz === undefined) var Viz = {};
         var dot_graph = {'data':dots};
         dot_graph.points = {show : true, radius:3, lineWidth: 1, fillColor: null, shadowSize : 0};
         lines_data.push(dot_graph);
-        
+
         // Remove last data line because covered by dot graph
         lines_data[0].data[last-1][1] = undefined;
 
@@ -18030,7 +19250,7 @@ if (Viz === undefined) var Viz = {};
         return lines_data;
     }
 
-    
+
     function composeRangeText(former_title,starting_utime, end_utime){
         //compose text to be appended to title on charts when zooming in/out
         var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -18044,7 +19264,7 @@ if (Viz === undefined) var Viz = {};
     }
 
     function sortBiArray(bi_array){
-        bi_array.sort(function(a, b) { 
+        bi_array.sort(function(a, b) {
             return (a[1] > b[1] || b[1] === undefined)?1:-1;
         });
         return bi_array;
@@ -18054,7 +19274,7 @@ if (Viz === undefined) var Viz = {};
         // get max value of multiple array object
         from_unixstamp = Math.round(from_unixstamp);
         to_unixstamp = Math.round(to_unixstamp);
-        
+
         // first, we have to filter the arrays
         var narrays = multiple_array.length;
         var aux_array = [];
@@ -18069,21 +19289,21 @@ if (Viz === undefined) var Viz = {};
                     //multiple_array[i].data.pop([z]);
                 }
             }
-        }        
+        }
 
         var res = [];
         for (i = 0; i < narrays; i++) {
             aux_array = multiple_array[i].data;
-            aux_array = sortBiArray(aux_array);        
+            aux_array = sortBiArray(aux_array);
             res.push(aux_array[aux_array.length-1][1]);
-        }        
+        }
         res.sort(function(a,b){return a-b;});
         return res[res.length-1];
-    }    
+    }
 
     function addEmptyValue(lines_data){
         // add empty value at the end to avoid drawing an incomplete point
-        
+
         var step = lines_data[0].data[1][0] - lines_data[0].data[0][0];
         var narrays = lines_data.length;
         var last_date = 0;
@@ -18206,7 +19426,7 @@ if (Viz === undefined) var Viz = {};
                 config.subtitle = config_metric.custom_title;
             }
         }
-        
+
 
         // Show last time series as a point, not a line. The data is incomplete
         // Only show for single lines when time series is complete
@@ -18248,7 +19468,7 @@ if (Viz === undefined) var Viz = {};
 
         var gap_size;
         var data_sets = lines_data.length;
-        gap_size = parseInt(history.unixtime[1]) - parseInt(history.unixtime[0]);
+        gap_size = parseInt(history.unixtime[1],10) - parseInt(history.unixtime[0],10);
         return gap_size / (data_sets + 1);
     }
 
@@ -18334,23 +19554,28 @@ if (Viz === undefined) var Viz = {};
             config.mouse.margin = 20;
         }
 
+        // we force the legend when several lines are plotted
+        if (lines_data.length > 1) config.legend.show = true;
+
         lines_data = timeToUnixTime(lines_data, history, bars_flag, bar_width);
 
         // Show last time series as a point, not a line. The data is incomplete
         // Only show for single lines when time series is complete
         var showLastPoint = false;
+        // If we show past information to overwrite to false the lastpoint
 
-        if (config_metric.graph !== "bars" && lines_data.length === 1) {
-            showLastPoint = true;
-        }
-
-        if (showLastPoint) {
-            lines_data = lastLineValueToPoint(history, lines_data);
-            // Add an extra entry for adding space for the circle point.
-            addEmptyValue(lines_data);
-        }else if(!showLastPoint && lines_data.length > 1){
-            // we drop it to avoid showing not complete periods without points
-            dropLastLineValue(history, lines_data);
+        if (Utils.isReleasePage() === false){
+            if (config_metric.graph !== "bars" && lines_data.length === 1) {
+                showLastPoint = true;
+            }
+            if (showLastPoint) {
+                lines_data = lastLineValueToPoint(history, lines_data);
+                // Add an extra entry for adding space for the circle point.
+                addEmptyValue(lines_data);
+            }else if(!showLastPoint && lines_data.length > 1){
+                // we drop it to avoid showing not complete periods without points
+                dropLastLineValue(history, lines_data);
+            }
         }
 
         /*graph = Flotr.draw(container, lines_data, config);*/
@@ -18362,8 +19587,8 @@ if (Viz === undefined) var Viz = {};
         }
         console.log(config);
         // Actually draw the graph.
-        graph = drawGraph();        
-        
+        graph = drawGraph();
+
         // Hook into the 'flotr:select' event to draw the chart after zoom in
         Flotr.EventAdapter.observe(container, 'flotr:select', function(area) {
             // Draw graph with new area
@@ -18387,7 +19612,7 @@ if (Viz === undefined) var Viz = {};
                     outline: 's'
                 }
             };
-            
+
             zoom_options.subtitle = composeRangeText(config.subtitle, area.xfirst, area.xsecond);
 
             //we don't want our object data to be modified so ..
@@ -18396,10 +19621,10 @@ if (Viz === undefined) var Viz = {};
 
             zoom_options.yaxis.max = max_value + max_value * 0.2; //we do Y axis a bit higher than max
 
-            
+
             graph = drawGraph(zoom_options);
         });
-        
+
         // When graph is clicked, draw the graph with default area.
         Flotr.EventAdapter.observe(container, 'flotr:click', function() {
             drawGraph();
@@ -18482,7 +19707,7 @@ if (Viz === undefined) var Viz = {};
 
         if (graph === "bars") {
             config.bars = {
-                show : true, 
+                show : true,
                 horizontal : horizontal
             };
             if (fixColor) {
@@ -18491,7 +19716,7 @@ if (Viz === undefined) var Viz = {};
             }
 
             if (config_metric && config_metric.show_legend !== false)
-                config.legend = {show:true, position: 'ne', 
+                config.legend = {show:true, position: 'ne',
                     container: legend_div};
 
             // TODO: Color management should be defined
@@ -18741,6 +19966,8 @@ if (Viz === undefined) var Viz = {};
         // Aging
         for (i = 0; i < data.aging.persons.age.length; i++) {
             age = data.aging.persons.age[i];
+            // With some sqlalchemy the format is "1091 days, 9:49:55"
+            age = age.toString().split(" ")[0];
             index = parseInt(age / period, 10);
             if (!period_data_aging[index])
                 period_data_aging[index] = 0;
@@ -18749,6 +19976,9 @@ if (Viz === undefined) var Viz = {};
         // Birth
         for (i = 0; i < data.birth.persons.age.length; i++) {
             age = data.birth.persons.age[i];
+            // With some sqlalchemy the format is "1091 days, 9:49:55"
+            age = age.toString().split(" ")[0];
+            age = age.split(" ")[0];
             index = parseInt(age / period, 10);
             if (!period_data_birth[index])
                 period_data_birth[index] = 0;
@@ -18872,7 +20102,7 @@ if (Viz === undefined) var Viz = {};
     function displayTimeTo(div_id, ttf_data, column, labels, title) {
         // We can have several columns (metrics)
         var metrics = column.split(",");
-        var history = ttf_data.data; 
+        var history = ttf_data.data;
         if (!history[metrics[0]]) return;
         var new_history = {};
         new_history.date = history.date;
@@ -18899,8 +20129,12 @@ if (Viz === undefined) var Viz = {};
     // Vibber",..]}
 
     function displayTop(div, ds, all, selected_metric, period, period_all, graph, titles, limit, people_links, threads_links, repository) {
-        var desc_metrics = ds.getMetrics();
+        /*
+         Call functions to compose the HTML for top tables with multiple of single
+         tabs.
+         */
 
+        var desc_metrics = ds.getMetrics();
         if (all === undefined) all = true;
         var history;
         if (repository === undefined){
@@ -18908,6 +20142,14 @@ if (Viz === undefined) var Viz = {};
         }else{
             history = ds.getRepositoriesTopData()[repository];
         }
+
+        // If the release flag is available, we overwrite the period_all and period
+        // variables.
+        if (Utils.isReleasePage()){
+            period_all = false;
+            period = '';
+        }
+
         if (period_all === true){
             var filtered_history = {};
             $.each(history, function(key, value) {
@@ -18957,7 +20199,7 @@ if (Viz === undefined) var Viz = {};
             if (data_file === undefined) return;
             Loader.get_file_data_div (data_file, Viz.displayTreeMap, divid);
             return;
-        } 
+        }
         else if (data === null) return;
 
         // We have the data to be drawn
@@ -18965,7 +20207,7 @@ if (Viz === undefined) var Viz = {};
 
         var div = d3.select("#"+divid);
 
-        var width = $("#"+divid).width(), 
+        var width = $("#"+divid).width(),
             height = $("#"+divid).height();
 
         var treemap = d3.layout.treemap()
@@ -18998,7 +20240,7 @@ if (Viz === undefined) var Viz = {};
                 });
 
         d3.selectAll("input").on("change", function change() {
-            var value = this.value === "count" 
+            var value = this.value === "count"
                 ? function() {return 1;}
                 : function(d) {return d.size;};
 
@@ -19037,8 +20279,8 @@ if (Viz === undefined) var Viz = {};
                     }
                 }
             }
-        };        
-        
+        };
+
         options.data = {
             summary : [history.id,history.sent],
             markers : markers,
@@ -19054,9 +20296,9 @@ if (Viz === undefined) var Viz = {};
             if (all_metrics[metric]) label = all_metrics[metric].name;
             options.data[metric] = [{label:label, data:[history.id,history[metric]]}];
         }
-        
+
         options.trackFormatter = function(o) {
-            var sdata = o.series.data, index = sdata[o.index][0] - firstMonth;            
+            var sdata = o.series.data, index = sdata[o.index][0] - firstMonth;
 
             var value = history.date[index] + ":<br>";
 
@@ -19089,7 +20331,7 @@ if (Viz === undefined) var Viz = {};
             if ((ds_name === null && DS.getName() === "scm") ||
                 (ds_name && DS.getName() == ds_name)) {
                 summary_data = [DS.getData().id, DS.getData()[main_metric]];
-                if (summary_graph === false) 
+                if (summary_graph === false)
                     summary_data = [DS.getData().id, []];
                 return false;
             }
@@ -19101,7 +20343,7 @@ if (Viz === undefined) var Viz = {};
         $.each(projects_data, function(project, data) {
             $.each(data, function(index, DS) {
                 if (ds_name && ds_name !== DS.getName()) return;
-                dates = DataProcess.fillDates(dates, 
+                dates = DataProcess.fillDates(dates,
                         [DS.getData().id, DS.getData().date]);
             });
         });
@@ -19144,7 +20386,7 @@ if (Viz === undefined) var Viz = {};
         var buildProjectInfo = function(index, ds) {
             var data = ds.getData();
             if (data[metric] === undefined) return;
-            if (options.data[metric] === undefined) 
+            if (options.data[metric] === undefined)
                 options.data[metric] = [];
             var full_data =
                 DataProcess.fillHistory(dates[0], [data.id, data[metric]]);
@@ -19152,7 +20394,7 @@ if (Viz === undefined) var Viz = {};
                 options.data[metric].push(
                         {label:project, data:full_data});
                 if (data[metric+"_relative"] === undefined) return;
-                if (options.data[metric+"_relative"] === undefined) 
+                if (options.data[metric+"_relative"] === undefined)
                     options.data[metric+"_relative"] = [];
                 full_data = DataProcess.fillHistory(dates[0],
                             [data.id, data[metric+"_relative"]]);
@@ -19200,7 +20442,7 @@ if (Viz === undefined) var Viz = {};
             if (projects.length>1) value +="<td></td>";
             for (metric in basic_metrics) {
                 if (options.data[metric] === undefined) continue;
-                if ($.inArray(metric,options.data.envision_hide) > -1) 
+                if ($.inArray(metric,options.data.envision_hide) > -1)
                     continue;
                 value += "<td>"+basic_metrics[metric].name+"</td>";
             }
@@ -19209,7 +20451,7 @@ if (Viz === undefined) var Viz = {};
                 var row = "<tr>";
                 for (var metric in basic_metrics) {
                     if (options.data[metric] === undefined) continue;
-                    if ($.inArray(metric,options.data.envision_hide) > -1) 
+                    if ($.inArray(metric,options.data.envision_hide) > -1)
                         continue;
                     mvalue = project_metrics[project][metric];
                     if (mvalue === undefined) mvalue = "n/a";
@@ -19258,7 +20500,7 @@ if (Viz === undefined) var Viz = {};
         config = checkBasicConfig(config);
         var title = '';
         if (config.show_title){
-            if (config.title === undefined){        
+            if (config.title === undefined){
                 title = getMetricFriendlyName(ds, metrics);
             }else{
                 title = config.title;
@@ -19304,30 +20546,30 @@ if (Viz === undefined) var Viz = {};
         displayMetricsLines(div_id, metrics, data, title, config);
     }
 
-    function displayMetricRepos(metric, data, div_target, 
+    function displayMetricRepos(metric, data, div_target,
             config, start, end) {
         config = checkBasicConfig(config);
         if (config.show_legend !== false)
             config.show_legend = true;
         var title = metric;
-        displayMetricSubReportLines(div_target, metric, data, title, 
+        displayMetricSubReportLines(div_target, metric, data, title,
                 config, start, end);
     }
 
-    function displayMetricsCountry (ds, country, metrics, data, div_id, 
+    function displayMetricsCountry (ds, country, metrics, data, div_id,
             config) {
         config = checkBasicConfig(config);
         var title = getMetricFriendlyName(ds, metrics);
         displayMetricsLines(div_id, metrics, data, title, config);
     }
 
-    function displayMetricCompanies(metric, data, div_target, 
+    function displayMetricCompanies(metric, data, div_target,
             config, start, end, order) {
         config = checkBasicConfig(config);
         if (config.show_legend !== false)
             config.show_legend = true;
         var title = metric;
-        displayMetricSubReportLines(div_target, metric, data, title, 
+        displayMetricSubReportLines(div_target, metric, data, title,
                 config, start, end, null, order);
     }
 
@@ -21327,5 +22569,5 @@ var Identity = {};
     };
 })();
 
-vizjslib_git_revision='a7542743d23d252cd226eb5cc6f10ff291d9f1c6';
-vizjslib_git_tag='2.1.3-58-ga754274';
+vizjslib_git_revision='184b2f96424cdc0e71f4208e0d3258a106fa3165';
+vizjslib_git_tag='2.1.3-139-g184b2f9';

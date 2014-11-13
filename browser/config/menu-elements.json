@@ -34,5 +34,5 @@
         ["Activity per company", "companies.html"]
     ]
     },
-    "releases":["Past 5 years"]
+    "releases":[["Past 5 years","5y"]]
 }

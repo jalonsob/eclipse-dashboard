@@ -1,15 +1,16 @@
 <!-- info text -->
 <div id="info" class="row">
-  <div class="col-md-12">Some charts and tables for top projects in
+  <div class="col-md-5">Some charts and tables for top projects in
     the project, and a summary of the evolution of their participation with
     links to more detailed information per project.</div>
-  <!-- <div class="col-md-7">
+  <div class="col-md-7">
+    <!-- evolution #projects -->
     <i> <b>Active Projects per month</b>
     </i>
     <div class="MetricsEvol" data-data-source="scr"
          data-metrics="scr_projects" data-legend="false"
          style="height: 80px;"></div>
-  </div> -->
+  </div>
 </div>
 <!-- end info text -->
 
@@ -57,11 +58,8 @@
 
 <!-- submitted per project -->
 <div id="list" class="row">
-  <!-- <div class="FilterItemsMiniCharts" data-data-source="scr"
-       data-metrics="scr_submitted,pending,review_time_days_avg"
-       data-filter="projects"></div> -->
   <div class="FilterItemsMiniCharts" data-data-source="scr"
-       data-metrics="scr_submitted,pending"
+       data-metrics="scr_submitted,scr_pending,scr_review_time_days_avg"
        data-filter="projects"></div>
 </div>
 <!-- end submitted per project -->

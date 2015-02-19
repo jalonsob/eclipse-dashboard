@@ -9,28 +9,28 @@ python apply_template.py --template body.template --content common/repository.tm
 python apply_template.py --template body.template --content common/data_sources.tmpl > ../browser/data_sources.html
 python apply_template.py --template body.template --content common/project_map.tmpl > ../browser/project_map.html
 python apply_template.py --template body.template --content common/project.tmpl > ../browser/project.html
-# python apply_template.py --template body.template --content common/demographics.tmpl > ../browser/demographics.html
-# python apply_template.py --template body.template --content common/timezones.tmpl > ../browser/timezones.html
+python apply_template.py --template body.template --content common/demographics.tmpl > ../browser/demographics.html
 python apply_template.py --template body.template.releases --content common/releases.tmpl > ../browser/release.html
+python apply_template.py --template body.template --content common/filter.tmpl > ../browser/filter.html
+
 
 cp common/footer.tmpl ../browser/footer.html
 cp common/navbar.tmpl ../browser/navbar.html
 
+# scm
+python apply_template.py --template body.template.events --content scm/events.tmpl > ../browser/scm-events.html
 
 # its
 python apply_template.py --template body.template --content its/overview.tmpl > ../browser/its.html
-#python apply_template.py --template body.template --content its/companies.tmpl > ../browser/its-companies.html
 python build_panel.py --template body.template --content common/list-of-filters.tmpl --conf conf/main.conf --panel its-companies > ../browser/its-companies.html
 python apply_template.py --template body.template --content its/contributors.tmpl > ../browser/its-contributors.html
-#python apply_template.py --template body.template --content its/countries.tmpl > ../browser/its-countries.html
 python build_panel.py --template body.template --content common/list-of-filters.tmpl --conf conf/main.conf --panel its-countries > ../browser/its-countries.html
-#python apply_template.py --template body.template --content its/domains.tmpl > ../browser/its-domains.html
 python build_panel.py --template body.template --content common/list-of-filters.tmpl --conf conf/main.conf --panel its-domains > ../browser/its-domains.html
 python apply_template.py --template body.template --content its/projects.tmpl > ../browser/its-projects.html
-#python apply_template.py --template body.template --content its/repos.tmpl > ../browser/its-repos.html
 python build_panel.py --template body.template --content common/list-of-filters.tmpl --conf conf/main.conf --panel its-repos > ../browser/its-repos.html
 python apply_template.py --template body.template --content its/states.tmpl > ../browser/its-states.html
-python apply_template.py --template body.template --content its/states-jira.tmpl > ../browser/its-states-jira.html
+# the template below contains the basic jira states
+#python apply_template.py --template body.template --content its/states-jira.tmpl > ../browser/its-states-jira.html
 
 # irc
 python apply_template.py --template body.template --content irc/overview.tmpl > ../browser/irc.html
@@ -88,3 +88,7 @@ python apply_template.py --template body.template --content wiki/contributors.tm
 
 # downloads
 python apply_template.py --template body.template --content downloads/overview.tmpl > ../browser/downloads.html
+
+# forge
+python apply_template.py --template body.template --content forge/overview.tmpl > ../browser/forge.html
+python apply_template.py --template body.template --content forge/contributors.tmpl > ../browser/forge-contributors.html

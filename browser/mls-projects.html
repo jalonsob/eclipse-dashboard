@@ -32,79 +32,68 @@
 
       <!-- Section HTML will be placed here, do not modify manually -->
       <!-- REPLACE SECTION HTML -->
-      <div class="row"><h4>Information about all projects</h4></div>
-<!-- info text -->
-<div id="info" class="row">
-  <div class="col-md-5">
-    Some charts and tables for top projects in the project, and a summary
-    of the evolution of their participation with links to more detailed
-    information per projects.
-  </div>
-  <div class="col-md-7">
-    <!-- evolution #projects -->
-    <i>
-      <b>Active Projects per month</b>
-    </i>
-    <div class="MetricsEvol" data-data-source="mls"
-         data-metrics="mls_projects" data-legend="false" style="height: 80px;"></div>
-  </div>
-</div>
-<!-- end info text -->
-
-
-<!-- list of projects -->
-<div id="nav" class="row">
-  <div class="FilterItemsNav" data-data-source="mls"
-       data-order-by="mls_sent" data-filter="projects" style="align: center"></div>
-</div>
-<!-- end list of projects -->
-
-
-<!-- sent, senders project -->
+      <!-- info text -->
 <div class="well">
-  <div id="summary-static" class="row">
-    <!-- sent -->
+  <div class="row">
+    <div class="col-md-6">
+      <p>Some charts and tables for top mailing lists in the project, and a summary of the evolution of their activity with links to more detailed information per project</p>
+    </div>
+    <div class="col-md-6">
+      <!-- evolution #companies -->
+      <div class="MetricsEvol" data-data-source="mls"
+           data-metrics="mls_projects" data-legend="false"
+           data-title="Active projects per month" data-help="false"
+           data-light-style="true" style="height: 80px;"></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 FilterItemsNav">
+      <div class="FilterItemsNav center-block" data-data-source="mls"
+       data-order-by="mls_sent" data-filter="projects"></div>
+    </div>
+  </div>
+
+  <!-- bar charts: commits, authors company -->
+  <div class="row">
+    <!-- commits -->
     <div class="col-md-1"></div>
     <div class="col-md-4">
-      <i>
-        <b>Messages per project (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="mls"
            data-metric="mls_sent" data-filter="projects"
-           data-legend-div="projects_legend" data-limit="10"
-           data-order-by="mls_sent">
-      </div>
+           data-legend-div="barchart_legend" data-limit="10"
+           data-order-by="mls_sent"
+           data-title="Mail messages per project"></div>
     </div>
-    <!-- end sent -->
-
-    <div class="col-md-2" id="projects_legend"></div>
-
-    <!-- senders -->
+    <!-- end commits -->
+    <div class="col-md-2" id="barchart_legend"
+         style="text-align:left;font-size: 1.2em;padding-top:10px;padding-left:20px;"></div>
+    <!-- authors -->
     <div class="col-md-4">
-      <i>
-        <b>Senders per project (aggregated)</b>
-      </i>
       <div class="FilterItemsGlobal" data-data-source="mls"
            data-metric="mls_senders" data-filter="projects"
-           data-legend="false" data-limit="10"
-           data-order-by="mls_sent"></div>
+           data-legend="false" data-limit="10" data-order-by="mls_sent"
+           data-title="Mail senders per project"></div>
     </div>
-    <!-- end senders -->
+    <!-- end authors -->
     <div class="col-md-1"></div>
   </div>
-</div>
-<!-- end sent, senders project -->
+  <!-- end of bar charts: commits, authors company -->
 
-<div id="summary-static" class="row"></div>
-
-<!-- sent per project -->
-<div id="list" class="row">
-  <div class="FilterItemsMiniCharts" data-data-source="mls"
-       data-metrics="mls_sent,mls_senders" data-filter="projects"
-       data-order-by="mls_sent">
+  <!-- commits per company -->
+  <div id="list" class="row">
+    <div class="FilterItemsMiniCharts" data-data-source="mls"
+         data-metrics="mls_sent,mls_senders" data-filter="projects"
+         data-order-by="mls_sent"></div>
   </div>
+  <div class="row"><div class="col-md-12">
+      <div class="FilterItemsNav" data-data-source="mls"
+       data-order-by="mls_sent" data-filter="projects"></div>
+    </div>
+  </div>
+
 </div>
-<!-- end sent per project -->
+<!-- end commits per company -->
 
       <!-- END SECTION  HTML-->
 

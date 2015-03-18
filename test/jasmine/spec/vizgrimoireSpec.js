@@ -57,7 +57,7 @@ describe("VizGrimoireJS data", function() {
     });
 
     describe("Updated Data: ", function() {
-        var max_days_old = 2000; // Change it to your project expected update time
+        var max_days_old = 7; // Change it to your project expected update time
         var now = new Date();
         var day_mseconds = 60*60*24*1000;
 

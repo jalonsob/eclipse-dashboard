@@ -346,7 +346,7 @@
     },    
     "scr_submitters" : {
         "divid" : "scr_submitters",
-        "column" : "submitters",
+        "column" : "openers",
         "name" : "Submitters",
         "desc" : "Number of persons closing code review processes",
         "action" : "submitted"

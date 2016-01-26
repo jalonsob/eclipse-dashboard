@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2012-2013 Bitergia
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ var CompaniesActivity = {};
     var activity_json = "data/json/companies-activity.json";
     var activity = null;
     var default_metrics = ['commits']; // defined in HTML
-    var default_years = ['all','2014']; // defined in HTML
+    var default_years = ['2015']; // defined in HTML
     var table_id = "companies_activity";
 
     function loadActivity (cb) {
@@ -42,15 +42,16 @@ var CompaniesActivity = {};
 
     CompaniesActivity.selection = function(kind, item) {
         var table = $("#"+table_id);
-        var div_parent = table.parent();
-        table.remove();
+        var div_parent = table.parent().parent().parent();
+        table.parent().parent().remove();
         html = displayTable(table_id);
         div_parent.append(html);
         addTableSortable(table_id);
     };
 
     function displaySelectors() {
-        selectors = "<form id='form_selectors'>\n";
+        selectors = '<div class="row"><div class="col-md-12">';
+        selectors += "<form id='form_selectors'>\n";
         var years = [], metrics = [];
         $.each(activity, function(key, value) {
             if (key === "name") return;
@@ -92,12 +93,13 @@ var CompaniesActivity = {};
         });
         selectors += '</div>\n';
         selectors += '</form>\n';
+        selectors += '</div></div>';
         return selectors;
     }
 
     function addTableSortable(id) {
         // Adding sorting capability for tables in BS3
-        $.extend($.tablesorter.themes.bootstrap, {
+        /*$.extend($.tablesorter.themes.bootstrap, {
             // these classes are added to the table. To see other table classes available,
             // look here: http://twitter.github.com/bootstrap/base-css.html#tables
             table      : 'table table-bordered',
@@ -114,24 +116,29 @@ var CompaniesActivity = {};
             filterRow  : '', // filter row class
             even       : '', // odd row zebra striping
             odd        : ''  // even row zebra striping
-        });
+        });*/
 
+        var client_height = document.body.clientHeight - 300;
         // call the tablesorter plugin and apply the uitheme widget
         $("#"+id).tablesorter({
             // this will apply the bootstrap theme if "uitheme" widget is included
+            showProcessing: true,
             theme : "bootstrap",
-            widthFixed: true,
-            headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+            //theme: 'blue',
+            //widthFixed: true,
+            //headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
 
             // widget code contained in the jquery.tablesorter.widgets.js file
             // use the zebra stripe widget if you plan on hiding any rows (filter widget)
-            widgets : [ "uitheme", "filter", "zebra" ],
+            widgets : [ "uitheme", "filter", "zebra", "scroller" ],
 
             widgetOptions : {
                 // using the default zebra striping class name, so it actually isn't included in the theme variable above
                 // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
                 zebra : ["even", "odd"],
-
+                scroller_fixedColumns: 2,
+                //scroller_height: 300,
+                scroller_height: client_height,
                 // reset filters button
                 filter_reset : ".reset"
             }
@@ -166,9 +173,9 @@ var CompaniesActivity = {};
     function displayTable(id) {
         var years = getActiveYears();
         var metrics = getActiveMetrics();
-        var table = "<div>";
+        var table = '<div class="row"><div class="col-md-12">';
         var totals = [];
-        table += "<table id='"+id+"' class='table table-hover'>";
+        table += "<table id='"+id+"'>";
         table += "<thead>";
         // First columns should be pos, name
         total = activity['name'].length;
@@ -179,12 +186,13 @@ var CompaniesActivity = {};
             var metric = key.split("_")[0];
             var year = key.split("_")[1];
             if (year === undefined) year = "all";
-            if ($.inArray(metric, metrics)>-1 && 
+            if ($.inArray(metric, metrics)>-1 &&
                 $.inArray(year, years)>-1) {
                 table += "<th class='filter-false'>"+key+"</th>";
             }
         });
         table += "</thead>";
+        table += '<tbody>';
         var pos = 0;
         for (var i = 0; i<total; i++) {
             table += "<tr>";
@@ -199,7 +207,7 @@ var CompaniesActivity = {};
                 metric = key.split("_")[0];
                 year = key.split("_")[1];
                 if (year === undefined) year = "all";
-                if ($.inArray(metric, metrics)>-1 && 
+                if ($.inArray(metric, metrics)>-1 &&
                         $.inArray(year, years)>-1) {
                     table += "<td>"+value[i];
                     if (metric.indexOf("percent")>-1) {table += " %";}
@@ -211,13 +219,14 @@ var CompaniesActivity = {};
             });
             table += "</tr>";
         }
-        table += "<tr><td colspan=2>Total</td>";
+        /*table += "<tr><td colspan=2>Total</td>";
         for (var i = 0; i<totals.length; i++) {
             table += "<td>"+totals[i]+"</td>";
         }
-        table += "</tr>";
+        table += "</tr>";*/
+        table += "</tbody>"
         table += "</table>";
-        table += "</div>";
+        table += "</div></div>";
         return table;
     }
 
@@ -229,6 +238,9 @@ var CompaniesActivity = {};
         addTableSortable(table_id);
     }
 
+    CompaniesActivity.set_data = function(data){
+        activity = data;
+    }
     CompaniesActivity.display = function() {
         var mark = "CompaniesActivity";
         var divs = $("."+mark);
@@ -252,10 +264,22 @@ var CompaniesActivity = {};
     };
 
     CompaniesActivity.build = function() {
-        loadActivity(CompaniesActivity.display);
+        CompaniesActivity.display();
     };
 })();
 
-Loader.data_ready(function() {
+/*Loader.data_ready(function() {
     CompaniesActivity.build();
+});*/
+
+$(window).on("resize", function() {
+    CompaniesActivity.display();
+});
+
+$(document).ready(function(){
+    $.getJSON('data/json/companies-activity.json', function(metrics){
+        //activity = metrics;
+        CompaniesActivity.set_data(metrics);
+        CompaniesActivity.display();
+    });
 });

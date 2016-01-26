@@ -34,21 +34,20 @@ ul.dropdown-menu-form {
 	max-height: 300px;
 	overflow-y: scroll;
 }
-.tablesorter thead .disabled {display: none}
-</style>
+.tablesorter-scroller .tablesorter-scroller-table {
+    overflow-y: hidden;
+}</style>
 </head>
 <body>
   <div id="Navbar"></div>
 
 
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
         <!-- http://dash.eclipse.org/dash/commits/web-app/commit-count-loc.php -->
-        <div class="CompaniesActivity" data-years_init="2014,all" 
-        data-metrics_init="committers-active,committers-inactive,committers,committers-percent-active,commits,lines-total,lines-per-commit"></div>
-      </div>
-    </div>
+		<div class"row">
+        	<div class="CompaniesActivity col-md-12" data-years_init="2015,all"
+        	data-metrics_init="committers-active,committers-inactive,committers,committers-percent-active,commits,lines-total,lines-per-commit"></div>
+		</div>
   </div>
 
   <footer>
@@ -59,8 +58,11 @@ ul.dropdown-menu-form {
   <script src="./lib/bootstrap-3.1.1.min.js"></script>
   <script src="./lib/jasny-bootstrap-3.1.3.min.js"></script>
   <script src="./lib/vizgrimoire.min.js"></script>
-  <script src="./js/jquery.tablesorter.min.js"></script>
-  <script src="./js/jquery.tablesorter.widgets.js"></script>
+  <!--<script src="./js/jquery.tablesorter.min.js"></script>
+  <script src="./js/jquery.tablesorter.widgets.js"></script>-->
+  <script src="./lib/jquery.tablesorter.min.js"></script>
+  <script src="./lib/jquery.tablesorter.widgets.js"></script>
+  <script src="./lib/widget-scroller.min.js"></script>
   <script src="./js/companies_activity.js"></script>
 
   <script>
@@ -69,4 +71,3 @@ ul.dropdown-menu-form {
 
 </body>
 </html>
-

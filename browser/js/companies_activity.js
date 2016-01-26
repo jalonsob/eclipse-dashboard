@@ -126,7 +126,7 @@ var CompaniesActivity = {};
             theme : "bootstrap",
             //theme: 'blue',
             //widthFixed: true,
-            //headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+            headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
 
             // widget code contained in the jquery.tablesorter.widgets.js file
             // use the zebra stripe widget if you plan on hiding any rows (filter widget)

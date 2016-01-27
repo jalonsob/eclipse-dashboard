@@ -40,6 +40,38 @@ var CompaniesActivity = {};
         });
     }
 
+    function prettyTitle (metric){
+        var metric_names = {
+            "actions": "Actions",
+            "authors": "Authors",
+            "closed": "Closed tickets",
+            "commits": "Commits",
+            "committers": "Committers",
+            "committers-active": "Active committers",
+            "committers-inactive": "Inactive committers",
+            "committers-percent-active": "Active committers (%)",
+            "lines-added": "Added lines",
+            "lines-per-commit": "Lines per commit",
+            "lines-removed": "Removed lines",
+            "lines-total": "Total lines",
+            "opened": "Opened tickets",
+            "sent": "Messages sent"
+        };
+        var tokens = metric.split('_');
+        var title = '';
+        if (tokens.length > 1){
+            title = metric_names[tokens[0]] + ' ' + tokens[1];
+        }else if (tokens.length == 1){
+            title = metric_names[tokens[0]];
+            //title = metric;
+        }else {
+            title = 'Undefined title';
+        }
+        console.log('metric = ' + metric);
+        console.log('title =' + title);
+        return title;
+    }
+
     CompaniesActivity.selection = function(kind, item) {
         var table = $("#"+table_id);
         var div_parent = table.parent().parent().parent();
@@ -89,7 +121,7 @@ var CompaniesActivity = {};
             selectors += 'onClick="CompaniesActivity.selection(\'metrics\',\''+metric+'\');" ';
             if ($.inArray(metric, default_metrics)>-1) selectors += 'checked ';
             selectors += '>';
-            selectors += metric + '</label></li>';
+            selectors += prettyTitle(metric) + '</label></li>';
         });
         selectors += '</div>\n';
         selectors += '</form>\n';
@@ -188,7 +220,8 @@ var CompaniesActivity = {};
             if (year === undefined) year = "all";
             if ($.inArray(metric, metrics)>-1 &&
                 $.inArray(year, years)>-1) {
-                table += "<th class='filter-false'>"+key+"</th>";
+                pretty_title = prettyTitle(key);
+                table += "<th class='filter-false'>" + pretty_title + "</th>";
             }
         });
         table += "</thead>";

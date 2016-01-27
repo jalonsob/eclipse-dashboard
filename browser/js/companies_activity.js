@@ -169,7 +169,7 @@ var CompaniesActivity = {};
                 // using the default zebra striping class name, so it actually isn't included in the theme variable above
                 // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
                 zebra : ["even", "odd"],
-                scroller_fixedColumns: 2,
+                //scroller_fixedColumns: 2,
                 //scroller_height: 300,
                 scroller_height: client_height,
                 // reset filters button

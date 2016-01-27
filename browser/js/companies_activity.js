@@ -88,12 +88,16 @@ var CompaniesActivity = {};
         $.each(activity, function(key, value) {
             if (key === "name") return;
             metric = key.split("_")[0];
-            year = key.split("_")[1];
-            if (year === undefined) year = "all";
-            if ($.inArray(year, years) === -1) years.push(year);
             if ($.inArray(metric, metrics) === -1) metrics.push(metric);
 
+            year = key.split("_")[1];
+            if (year !== undefined){
+                if ($.inArray(year, years) === -1) years.push(year);
+            }
         });
+
+        years.push("all");
+        years.reverse();
 
         // Years selector
         selectors += '<div class="dropdown pull-left">';

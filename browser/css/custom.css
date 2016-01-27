@@ -26,7 +26,7 @@ body {
 @media (min-width: 0) {
   .navbar-toggle {
     display: block;
-    float: left; 
+    float: left;
     margin-left: 15px;
   }
 }
@@ -74,10 +74,10 @@ body {
     color: #555;
     margin-bottom: 7px;
     font-weight: bold;
-    line-height: 1.0;                 
+    line-height: 1.0;
 }
 
-.toptable-title{ 
+.toptable-title{
     font-size: 105%;
     letter-spacing: 1px;
     margin-bottom: 10px;
@@ -90,14 +90,14 @@ body {
 /** Filter bar used to select repository in
 scm-contributors **/
 
-.filterbar { 
+.filterbar {
     background-color: #f5f5f5;
     border-radius: 4px;
     list-style: none outside none;
     margin-bottom: 20px;
-    padding: 8px 15px;              
+    padding: 8px 15px;
 }
-.filterbar > li { 
+.filterbar > li {
     display: inline-block;
 }
 
@@ -137,47 +137,47 @@ scm-contributors **/
 .breadcrumbtitle > .active {
     color: #999999;
 }
-.breadcrumbtitle >li > a { 
+.breadcrumbtitle >li > a {
     /* color: #ED9C06; */
     color: #999;
     text-decoration: none;
 }
-.breadcrumbtitle >li > a:hover { 
+.breadcrumbtitle >li > a:hover {
     color: #428bca;
     text-decoration: none;
 }
-.ol { 
+.ol {
     margin-bottom: 10px;
     margin-top: 15px;
 }
 
 /** Navigation breadcrumb (on navigation bar) **/
 
-.navbar-default .navbar-brand { 
+.navbar-default .navbar-brand {
     /*color: #ED9C06;*/
     color: #999;
 }
-.navbar-default .navbar-brand:hover { 
+.navbar-default .navbar-brand:hover {
     /*color: #ED9C06;*/
     color: #428bca;
 }
-.navbar-default { 
+.navbar-default {
     background-color: #f8f8f8;
     border-color: #e7e7e7;
 }
-.navbar-fixed-top { 
+.navbar-fixed-top {
     border-width: 0 0 2px;
     top: 0;
 }
 
-.navbar-default .navbar-toggle { 
+.navbar-default .navbar-toggle {
     background-color: #FFFFFF;
     border-color: #FFFFFF;
 }
 
 /** Section breadcrumb (Project overview)**/
 
-.breadcrumb { 
+.breadcrumb {
     background-color: #FFFFFF;
     border-radius: 4px;
     list-style: none outside none;
@@ -185,20 +185,20 @@ scm-contributors **/
     padding: 8px 15px;
 }
 
-/*.breadcrumbtitle >li > a { 
+/*.breadcrumbtitle >li > a {
     color: #C43422;
     text-decoration: none;
 }
 
-.breadcrumbtitle >li > a:hover { 
+.breadcrumbtitle >li > a:hover {
     color: #2A6496;
     text-decoration: none;
 }*/
 
 /** Boxes (well is a boostrap 3 class)**/
-.well{ 
+.well{
     background-color: #FFFFFF; }
-.wellmin{ 
+.wellmin{
     background-color: #FFFFFF; }
 
 
@@ -227,3 +227,6 @@ a:focus {
 
 /** Fix for issue in jasny offside canvas menu in dropdowns */
 .navmenu-nav.dropdown-menu { position: relative; }
+.tablesorter-scroller-table table.tablesorter {
+    overflow-y: visible !important;
+}

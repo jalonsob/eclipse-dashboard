@@ -26,19 +26,12 @@
 
 <!-- custom -->
 <!-- <link rel="stylesheet" href="VizGrimoireJS/custom.css">-->
-<link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
 <link rel="stylesheet" type="text/css" id="theme" href="./css/custom.css">
-<style>
-ul.dropdown-menu-form {
-	padding: 5px 10px 0;
-	max-height: 300px;
-	overflow-y: scroll;
-}
-.tablesorter-scroller .tablesorter-scroller-table {
-    overflow-y: hidden;
-}</style>
+<link rel="stylesheet" type="text/css" id="theme" href="./css/vizgrimoire.css">
+
 </head>
 <body>
+  <!--<div id="Navbar"></div>-->
   <div id="Navbar"></div>
 
 
@@ -48,16 +41,30 @@ ul.dropdown-menu-form {
         	<div class="CompaniesActivity col-md-12" data-years_init="2015,all"
         	data-metrics_init="committers-active,committers-inactive,committers,committers-percent-active,commits,lines-total,lines-per-commit"></div>
 		</div>
-  </div>
 
-  <footer>
-    <div id="Footer"></div>
-  </footer>
+
+		<div class="row">
+		    <div class="col-md-5">
+		        <span class="pull-left"> Powered by <a href="http://metricsgrimoire.github.com/">MetricsGrimoire</a>
+		            and <a href="http://vizgrimoire.bitergia.org/">VizGrimoire</a></span>
+		    </div>
+
+		    <div class="col-md-5 col-md-offset-2">
+		        <span class="pull-right"> © 2012-2016
+		            &nbsp;&nbsp;&nbsp;&nbsp; <a href="http://creativecommons.org/licenses/by-sa/3.0">
+		                <img src="cc-by-sa.png" border="0" alt="CC by-sa">
+		        </a> &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://bitergia.com/"><img src="bitergia-logo.png" alt="Bitergia logo" id="logo" height="45" width="90" border="0"></a>
+		        </span>
+		    </div>
+		</div>
+
+  </div>
 
   <script src="./lib/jquery-1.11.1.min.js"></script>
   <script src="./lib/bootstrap-3.1.1.min.js"></script>
   <script src="./lib/jasny-bootstrap-3.1.3.min.js"></script>
   <script src="./lib/vizgrimoire.min.js"></script>
+
   <!--<script src="./js/jquery.tablesorter.min.js"></script>
   <script src="./js/jquery.tablesorter.widgets.js"></script>-->
   <script src="./lib/jquery.tablesorter.min.js"></script>

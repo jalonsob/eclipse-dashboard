@@ -154,7 +154,8 @@ var CompaniesActivity = {};
         // call the tablesorter plugin and apply the uitheme widget
         $("#"+id).tablesorter({
             // this will apply the bootstrap theme if "uitheme" widget is included
-            showProcessing: true,
+            //showProcessing: true,
+            sortInitialOrder: "asc",
             theme : "bootstrap",
             //theme: 'blue',
             //widthFixed: true,
@@ -173,6 +174,11 @@ var CompaniesActivity = {};
                 scroller_height: client_height,
                 // reset filters button
                 filter_reset : ".reset"
+            },
+            // pass the headers argument and passing a object
+            headers: {
+                // set initial sort order by column, this headers option setting overrides the sortInitialOrder option
+                0: { sortInitialOrder: 'desc' }
             }
         });
     }
@@ -221,7 +227,7 @@ var CompaniesActivity = {};
             if ($.inArray(metric, metrics)>-1 &&
                 $.inArray(year, years)>-1) {
                 pretty_title = prettyTitle(key);
-                table += "<th class='filter-false'>" + pretty_title + "</th>";
+                table += '<th data-sortinitialorder="desc" class="filter-false">' + pretty_title + "</th>";
             }
         });
         table += "</thead>";

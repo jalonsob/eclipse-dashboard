@@ -32,13 +32,13 @@ var CompaniesActivity = {};
     var default_years = ['2015']; // defined in HTML
     var table_id = "companies_activity";
 
-    function loadActivity (cb) {
+    /*function loadActivity (cb) {
         $.when($.getJSON(activity_json)
             ).done(function(metrics) {
                 activity = metrics;
                 cb();
         });
-    }
+    }*/
 
     function prettyTitle (metric){
         var metric_names = {
@@ -231,7 +231,7 @@ var CompaniesActivity = {};
             table += "<tr>";
             // First column should be pos, name
             table += "<td>"+(++pos)+"</td>";
-            item = activity['name'][i];
+            item = activity.name[i];
             // Specific for companies but easy to change
             table += "<td><a href='company.html?company="+item+"'>"+item+"</a></td>";
             var j = 0;
@@ -306,9 +306,9 @@ var CompaniesActivity = {};
         });
     };
 
-    CompaniesActivity.build = function() {
+    /*CompaniesActivity.build = function() {
         CompaniesActivity.display();
-    };
+    };*/
 })();
 
 /*Loader.data_ready(function() {

@@ -42,8 +42,8 @@ var CompaniesActivity = {};
 
     function prettyTitle (metric){
         var metric_names = {
-            "actions": "Actions",
-            "authors": "Authors",
+            "actions": "Actions over files",
+            "authors": "Authors (git)",
             "closed": "Closed tickets",
             "commits": "Commits",
             "committers": "Committers",

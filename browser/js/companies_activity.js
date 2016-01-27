@@ -242,7 +242,17 @@ var CompaniesActivity = {};
                 if (year === undefined) year = "all";
                 if ($.inArray(metric, metrics)>-1 &&
                         $.inArray(year, years)>-1) {
-                    table += "<td>"+value[i];
+                            ////
+                            console.log(value[i]);
+                            if (value[i] !== null){
+                                //table += '<td class="text-right">' + value[i].toLocaleString();
+                                table += '<td class="text-right">' + new Intl.NumberFormat("en-US", {maximumFractionDigits: 0}).format(value[i]);
+
+                            }else{
+                                table += '<td class="text-right">' + value[i];
+                            }
+
+                            ////
                     if (metric.indexOf("percent")>-1) {table += " %";}
                     table += "</td>";
                     if (totals[j] === undefined) {totals[j] = 0;}

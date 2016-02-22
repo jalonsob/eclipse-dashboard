@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["323 days, 11:06:02","652 days, 3:27:59"],"id": ["03b44b19cce934acc6687d11f348145e8bdd6c41","5869429e2842c986f8569e4d66b81daf4a2197e8"],"name": ["Ghada Gharbi","Yassine Banouar"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [323,652],"id": ["03b44b19cce934acc6687d11f348145e8bdd6c41","5869429e2842c986f8569e4d66b81daf4a2197e8"],"name": ["Ghada Gharbi","Yassine Banouar"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

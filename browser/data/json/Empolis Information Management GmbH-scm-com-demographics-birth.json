@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["433 days, 7:01:10","433 days, 6:52:13"],"id": ["722499f41f822b842e0476b6483265e85081f1c2","aad8a7b8f513c70c76b2587f3112eb472dfab7f5"],"name": ["Andreas Weber","Juergen Schumacher"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [433,433],"id": ["722499f41f822b842e0476b6483265e85081f1c2","aad8a7b8f513c70c76b2587f3112eb472dfab7f5"],"name": ["Andreas Weber","Juergen Schumacher"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

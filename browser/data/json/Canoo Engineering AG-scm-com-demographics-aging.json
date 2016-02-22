@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["327 days, 10:01:01"],"id": ["fb3ffa522f826d621db27a90e56de1d9e5b899eb"],"name": ["Franz-Josef Wiszniewsky"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [327],"id": ["fb3ffa522f826d621db27a90e56de1d9e5b899eb"],"name": ["Franz-Josef Wiszniewsky"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

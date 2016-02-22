@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["690 days, 9:14:32","249 days, 8:07:42"],"id": ["82e1ae7cf3254229e57b6c3d4f328744811ff9ca","aaf5b8df134203d77176c9a0342b7ebcf01437fb"],"name": ["Philip Wenig","Janos Binder"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [690,249],"id": ["82e1ae7cf3254229e57b6c3d4f328744811ff9ca","aaf5b8df134203d77176c9a0342b7ebcf01437fb"],"name": ["Philip Wenig","Janos Binder"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1489 days, 13:43:39","1498 days, 8:20:29"],"id": ["421e90795045603e3c18323209bd9bc87dcec69c","639633f4923d20bb62132009f53b40e693831f62"],"name": ["Lukas Ladenberger","Michael Jastram"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1489,1498],"id": ["421e90795045603e3c18323209bd9bc87dcec69c","639633f4923d20bb62132009f53b40e693831f62"],"name": ["Lukas Ladenberger","Michael Jastram"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

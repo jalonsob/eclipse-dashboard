@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1330 days, 3:56:04"],"id": ["3ec6aae9505f87f5bacd97045da9164b6060b662"],"name": ["Thomas Corbat"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1330],"id": ["3ec6aae9505f87f5bacd97045da9164b6060b662"],"name": ["Thomas Corbat"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

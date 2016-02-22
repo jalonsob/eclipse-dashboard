@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["2437 days, 5:17:45"],"id": ["59ab281ced1cf0a4e81debf2710fd7022e08d5c9"],"name": ["Mauren Brenner"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [2437],"id": ["59ab281ced1cf0a4e81debf2710fd7022e08d5c9"],"name": ["Mauren Brenner"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

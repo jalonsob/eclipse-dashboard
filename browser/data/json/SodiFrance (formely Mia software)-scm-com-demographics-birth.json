@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1924 days, 5:17:18","1201 days, 10:13:57","1905 days, 8:06:21"],"id": ["6eb56862d208e8a12165c8e86878a5d449017067","7350ccb561a99e966dd3e8e825d86aa59546c5e6","a1fcac01dc1561072c9d0ea1276dc05fe00b9014"],"name": ["Gregoire Dupe","Fabien Giquel","Nicolas Bros"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1924,1201,1905],"id": ["6eb56862d208e8a12165c8e86878a5d449017067","7350ccb561a99e966dd3e8e825d86aa59546c5e6","a1fcac01dc1561072c9d0ea1276dc05fe00b9014"],"name": ["Gregoire Dupe","Fabien Giquel","Nicolas Bros"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

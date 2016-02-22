@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1779 days, 1:16:46","1376 days, 9:12:01","1886 days, 23:20:16","1883 days, 1:35:05","949 days, 7:17:19"],"id": ["0896c38db668eb1ae0b3906ab2f179ca69a986f4","4273e525981f1ea9eb9f824ef8a243f893292d3d","68e91520f98c6e9ef7abf54653d0baf044ad5864","6a92ad52f1860b907d78ced38bf1e6acaa456f77","b929d75420da3025e66cbc0d9ae620fdf32dfa0c"],"name": ["Thomas Jung","Juergen Haug","Henrik Rentz-Reichert","Thomas Schuetz","Eyrak Paen"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1779,1376,1886,1883,949],"id": ["0896c38db668eb1ae0b3906ab2f179ca69a986f4","4273e525981f1ea9eb9f824ef8a243f893292d3d","68e91520f98c6e9ef7abf54653d0baf044ad5864","6a92ad52f1860b907d78ced38bf1e6acaa456f77","b929d75420da3025e66cbc0d9ae620fdf32dfa0c"],"name": ["Thomas Jung","Juergen Haug","Henrik Rentz-Reichert","Thomas Schuetz","Eyrak Paen"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

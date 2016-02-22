@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["3272 days, 15:27:55","2637 days, 4:55:47","3270 days, 13:11:21"],"id": ["dc70ca9c3feae8bfee3ad39995ad598797414675","e696ef8d8f115f91f17cca7926f936e3e3173e8a","fbd118b7d3d320d126df2c5bbeb39adc0d8fd12e"],"name": ["Filip Hrbek","Michal Ruzicka","Karel Brezina"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [3272,2637,3270],"id": ["dc70ca9c3feae8bfee3ad39995ad598797414675","e696ef8d8f115f91f17cca7926f936e3e3173e8a","fbd118b7d3d320d126df2c5bbeb39adc0d8fd12e"],"name": ["Filip Hrbek","Michal Ruzicka","Karel Brezina"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

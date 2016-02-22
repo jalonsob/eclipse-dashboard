@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["736 days, 0:45:12"],"id": ["cdf131071b4ca94cf815798caf291203e69962d1"],"name": ["Olivier Prouvost"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [736],"id": ["cdf131071b4ca94cf815798caf291203e69962d1"],"name": ["Olivier Prouvost"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

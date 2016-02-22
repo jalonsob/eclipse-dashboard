@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["916 days, 7:16:37","929 days, 1:13:45","925 days, 5:05:27"],"id": ["8aa3779e862e71ee0c2c25e26206229d934b57f5","95afde25ba45f420b2d5ce7d49f9057ea454e6d6","f736655541bd56bf441e3250dd0ba028d48a60d0"],"name": ["Johannes Dorn","Marcel Bruch","Andreas Sewe"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [916,929,925],"id": ["8aa3779e862e71ee0c2c25e26206229d934b57f5","95afde25ba45f420b2d5ce7d49f9057ea454e6d6","f736655541bd56bf441e3250dd0ba028d48a60d0"],"name": ["Johannes Dorn","Marcel Bruch","Andreas Sewe"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1792 days, 13:38:14"],"id": ["4af6af93cec3efb2e3d0d606edd9717e84b390e8"],"name": ["Kevin Sawicki"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1792],"id": ["4af6af93cec3efb2e3d0d606edd9717e84b390e8"],"name": ["Kevin Sawicki"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

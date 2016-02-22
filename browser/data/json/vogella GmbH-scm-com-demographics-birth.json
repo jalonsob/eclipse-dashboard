@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["137 days, 18:34:02","137 days, 14:48:11"],"id": ["576af442807b68da69b36d8c0ded9453b5ab8855","8cb5421f9a8746210b33a87a67f15a99a1ca3a86"],"name": ["Lars Vogel","Simon Scholz"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [137,137],"id": ["576af442807b68da69b36d8c0ded9453b5ab8855","8cb5421f9a8746210b33a87a67f15a99a1ca3a86"],"name": ["Lars Vogel","Simon Scholz"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

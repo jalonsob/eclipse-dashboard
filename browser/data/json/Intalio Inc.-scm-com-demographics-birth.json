@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["2448 days, 12:35:14"],"id": ["f4991857d3783ccb8db0228dba4623e3a75e9d8b"],"name": ["Simone Bordet"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [2448],"id": ["f4991857d3783ccb8db0228dba4623e3a75e9d8b"],"name": ["Simone Bordet"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

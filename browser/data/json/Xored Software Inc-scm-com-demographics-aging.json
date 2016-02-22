@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["285 days, 20:34:10","592 days, 8:34:43","1236 days, 10:34:18"],"id": ["40e4d1e5d3d83c417fd2b7d58df3b7e1badfc696","a6214974b719d6d36e735fb7565c56ffeec495ac","beee7161b9c63c93dc031ea505b8ebcac27e582f"],"name": ["Pavel Agapov","Ulyana Skorokhodova","Andrei Sobolev"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [285,592,1236],"id": ["40e4d1e5d3d83c417fd2b7d58df3b7e1badfc696","a6214974b719d6d36e735fb7565c56ffeec495ac","beee7161b9c63c93dc031ea505b8ebcac27e582f"],"name": ["Pavel Agapov","Ulyana Skorokhodova","Andrei Sobolev"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

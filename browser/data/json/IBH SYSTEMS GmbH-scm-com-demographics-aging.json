@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["882 days, 13:24:36","848 days, 12:59:21"],"id": ["22e26d583f6f311a4d83e46eaf847b2cf493f68d","ecf197cceb4e217fd7d0f83d24c9430862cd79a6"],"name": ["Jens Reimann","Juergen Rose"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [882,848],"id": ["22e26d583f6f311a4d83e46eaf847b2cf493f68d","ecf197cceb4e217fd7d0f83d24c9430862cd79a6"],"name": ["Jens Reimann","Juergen Rose"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

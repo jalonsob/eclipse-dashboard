@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["350 days, 11:54:16","355 days, 2:05:32","351 days, 9:24:19"],"id": ["456a909af16ba719f16aa8258b15005e982fb35d","7b4cd289cff479285c9f02e4b661233a78181317","85df0e2b0467b73a68f8e3d6f645b9a185bb34f7"],"name": ["Etienne Studer","Stefan Oehme","Donat Csikos"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [350,355,351],"id": ["456a909af16ba719f16aa8258b15005e982fb35d","7b4cd289cff479285c9f02e4b661233a78181317","85df0e2b0467b73a68f8e3d6f645b9a185bb34f7"],"name": ["Etienne Studer","Stefan Oehme","Donat Csikos"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1566 days, 10:43:46","1737 days, 9:19:54"],"id": ["4c1b120b30d925be2004c14a85139f41946450ef","b9563acae2a7a4c080e9e2264a3815ead58e5547"],"name": ["Sebastian Proksch","Johannes Lerch"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1566,1737],"id": ["4c1b120b30d925be2004c14a85139f41946450ef","b9563acae2a7a4c080e9e2264a3815ead58e5547"],"name": ["Sebastian Proksch","Johannes Lerch"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

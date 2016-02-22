@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1435 days, 5:30:44","286 days, 4:21:31","1461 days, 5:05:41"],"id": ["5443ba1e671efe2779e47f25347da12627271ad0","b6299ac0ba8d4cdb1eb2931efe401cad8f4888ff","eb3e16da50d84b5de8c841ebde2aad1ac95e7de4"],"name": ["Manuel Bork","Andreas Scharf","Carsten Reckord"]}}
+=======
+{"date": "2016-02-17T00:00:00","persons": {"age": [1435,286,1461],"id": ["5443ba1e671efe2779e47f25347da12627271ad0","b6299ac0ba8d4cdb1eb2931efe401cad8f4888ff","eb3e16da50d84b5de8c841ebde2aad1ac95e7de4"],"name": ["Manuel Bork","Andreas Scharf","Carsten Reckord"]}}
+>>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

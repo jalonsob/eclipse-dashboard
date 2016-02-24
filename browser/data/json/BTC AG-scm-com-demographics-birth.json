@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["310 days, 1:53:36","294 days, 7:44:13","224 days, 14:44:38"],"id": ["16ed9fb47dc0668635d68be70ae41c9ae649a450","3ebe866b184ae92c0477b740348b7092dc95f056","90292103c3f892b473fda358c4e2e7bc9f41c6e3"],"name": ["Jan Krueger","Stefan Brockmann","Henning Lampe"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [310,294,224],"id": ["16ed9fb47dc0668635d68be70ae41c9ae649a450","3ebe866b184ae92c0477b740348b7092dc95f056","90292103c3f892b473fda358c4e2e7bc9f41c6e3"],"name": ["Jan Krueger","Stefan Brockmann","Henning Lampe"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

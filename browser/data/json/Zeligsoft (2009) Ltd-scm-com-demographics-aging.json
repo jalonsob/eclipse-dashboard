@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["280 days, 10:31:14","141 days, 10:26:33","258 days, 14:30:33","377 days, 11:46:02","263 days, 13:05:00"],"id": ["186fe7b96bee39f958b5236d5c67e2dc93ad76bc","1ea150acf34803ef959b4c41f0940eac51e7611d","5b5e036a11d749a50fd4c89e6dea19a2f114a296","82097eeb56fb64709500ae4154855d1a53da4130","bd53f3ac7f498b8d790135f5ded861b7fe581aa7"],"name": ["Ernesto Posse","Stephanie Chafe","Charles Rivet","Young-Soo Roh","Simon Redding"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [280,141,258,377,263],"id": ["186fe7b96bee39f958b5236d5c67e2dc93ad76bc","1ea150acf34803ef959b4c41f0940eac51e7611d","5b5e036a11d749a50fd4c89e6dea19a2f114a296","82097eeb56fb64709500ae4154855d1a53da4130","bd53f3ac7f498b8d790135f5ded861b7fe581aa7"],"name": ["Ernesto Posse","Stephanie Chafe","Charles Rivet","Young-Soo Roh","Simon Redding"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

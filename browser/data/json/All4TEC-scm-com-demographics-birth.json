@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["570 days, 6:24:32","679 days, 10:48:48","713 days, 8:14:55","579 days, 12:57:38"],"id": ["0371428f00bb70126ecaa70a05094f4d8c15899c","4d041cae8acf8f0e6db6abfdb734a54a8602b0c3","dbd33c9d5bd68371d4eb0e2cd294a91207f98374","fce2295663cd1e82c485a0e4cd20157a889f7116"],"name": ["Hussein Mhanna","Mickael ADAM","Gabriel Pascual","Celine Janssens"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [570,679,713,579],"id": ["0371428f00bb70126ecaa70a05094f4d8c15899c","4d041cae8acf8f0e6db6abfdb734a54a8602b0c3","dbd33c9d5bd68371d4eb0e2cd294a91207f98374","fce2295663cd1e82c485a0e4cd20157a889f7116"],"name": ["Hussein Mhanna","Mickael ADAM","Gabriel Pascual","Celine Janssens"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

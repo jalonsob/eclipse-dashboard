@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["637 days, 23:36:41","647 days, 0:32:44"],"id": ["8edf41d725f4be0bf47845cab60e2243bc311b78","b3be3ca81334862d45d0be9747646cdac87911c9"],"name": ["Thomas Eichstaedt-Engelen","Kai Kreuzer"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [637,647],"id": ["8edf41d725f4be0bf47845cab60e2243bc311b78","b3be3ca81334862d45d0be9747646cdac87911c9"],"name": ["Thomas Eichstaedt-Engelen","Kai Kreuzer"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

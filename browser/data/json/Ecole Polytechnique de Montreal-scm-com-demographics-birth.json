@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["1106 days, 6:36:29","1092 days, 9:42:13"],"id": ["432f257105945d514343bcfbe6e42142a48c77d0","4ef79d9c421169d390d2db55f3af55a24b4d391d"],"name": ["Francis Giraldeau","Genevieve Bastien"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [1106,1092],"id": ["432f257105945d514343bcfbe6e42142a48c77d0","4ef79d9c421169d390d2db55f3af55a24b4d391d"],"name": ["Francis Giraldeau","Genevieve Bastien"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

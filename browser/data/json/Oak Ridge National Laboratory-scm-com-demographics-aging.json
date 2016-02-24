@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["469 days, 8:43:29","472 days, 8:52:06","257 days, 13:19:53","463 days, 14:02:57","439 days, 12:48:02"],"id": ["0e61dd151ccdd588083206e28db3b593b941c400","72a5276415a379fda6dec373958127e4e5b4f12c","d6de55d7e5b86c9170b86ed716f3e8e6a0ca7e6a","dc64d6ad79aa9a7ff21c59fd11016f68560a9c74","e60e1dc63a0bc071adc1d403d67927034a0de288"],"name": ["Jordan Deyton","Jay Billings","Robert Smith","Alex McCaskey","Andrew Bennett"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [469,472,257,463,439],"id": ["0e61dd151ccdd588083206e28db3b593b941c400","72a5276415a379fda6dec373958127e4e5b4f12c","d6de55d7e5b86c9170b86ed716f3e8e6a0ca7e6a","dc64d6ad79aa9a7ff21c59fd11016f68560a9c74","e60e1dc63a0bc071adc1d403d67927034a0de288"],"name": ["Jordan Deyton","Jay Billings","Robert Smith","Alex McCaskey","Andrew Bennett"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

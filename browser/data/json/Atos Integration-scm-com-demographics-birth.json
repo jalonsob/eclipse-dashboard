@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["796 days, 7:31:10","369 days, 6:20:09","790 days, 14:38:25","490 days, 12:53:53"],"id": ["26b1aada76b4986fc49885614b59ffb7cad7acf8","5019eb21fdfa8e93668a2faa7ed7c2a821806464","6e8f69ab400ed081ad79a13f02d0e280efae8c23","ca182fae74bf1c26a9cea435d2c14e125a8253b1"],"name": ["Mathieu Velten","Jean-Francois Rolland","Tristan FAURE","Anne HAUGOMMARD"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [796,369,790,490],"id": ["26b1aada76b4986fc49885614b59ffb7cad7acf8","5019eb21fdfa8e93668a2faa7ed7c2a821806464","6e8f69ab400ed081ad79a13f02d0e280efae8c23","ca182fae74bf1c26a9cea435d2c14e125a8253b1"],"name": ["Mathieu Velten","Jean-Francois Rolland","Tristan FAURE","Anne HAUGOMMARD"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

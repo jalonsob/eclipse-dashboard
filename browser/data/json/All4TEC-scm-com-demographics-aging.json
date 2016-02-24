@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["679 days, 10:48:48","579 days, 12:57:38"],"id": ["4d041cae8acf8f0e6db6abfdb734a54a8602b0c3","fce2295663cd1e82c485a0e4cd20157a889f7116"],"name": ["Mickael ADAM","Celine Janssens"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [679,579],"id": ["4d041cae8acf8f0e6db6abfdb734a54a8602b0c3","fce2295663cd1e82c485a0e4cd20157a889f7116"],"name": ["Mickael ADAM","Celine Janssens"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

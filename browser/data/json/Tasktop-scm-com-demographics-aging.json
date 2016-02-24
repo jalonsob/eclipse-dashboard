@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["2190 days, 1:31:37","1664 days, 4:39:17","2303 days, 9:10:29","2166 days, 8:44:58"],"id": ["202ce0002d28d366c40d0da629685b2cd2761862","5683be974588cf078e4189db944078831be77da6","9b4e5acc9b61cbebf97556b5e67bf88435e76039","b5458bdcc55ea9f39f16eaf5af924d77076c520b"],"name": ["Steffen Pingel","Sam Davis","Gunnar Wagenknecht","David Green"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [2190,1664,2303,2166],"id": ["202ce0002d28d366c40d0da629685b2cd2761862","5683be974588cf078e4189db944078831be77da6","9b4e5acc9b61cbebf97556b5e67bf88435e76039","b5458bdcc55ea9f39f16eaf5af924d77076c520b"],"name": ["Steffen Pingel","Sam Davis","Gunnar Wagenknecht","David Green"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

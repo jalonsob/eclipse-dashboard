@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["3351 days, 15:23:01","3527 days, 9:11:43","1005 days, 6:23:09","3583 days, 16:50:51"],"id": ["0dd8f13e9afd6d1571a9d91f39a17c2ade502538","7f6b780fb32546bb27ce8a4005e11b5f9c71b108","aeea25ffa94109ff5487ffd2f16ac71fd6d215d0","cecf565c5d896bb7cc3ff4d441881871f1bdcff1"],"name": ["Uwe Stieber","Anton Leherbauer","David Navarro","Martin Oberhuber"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [3351,3527,1005,3583],"id": ["0dd8f13e9afd6d1571a9d91f39a17c2ade502538","7f6b780fb32546bb27ce8a4005e11b5f9c71b108","aeea25ffa94109ff5487ffd2f16ac71fd6d215d0","cecf565c5d896bb7cc3ff4d441881871f1bdcff1"],"name": ["Uwe Stieber","Anton Leherbauer","David Navarro","Martin Oberhuber"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995

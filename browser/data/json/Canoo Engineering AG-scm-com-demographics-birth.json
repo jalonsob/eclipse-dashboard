@@ -1,5 +1,1 @@
-<<<<<<< HEAD
 {"date": "2016-02-17 00:00:00","persons": {"age": ["379 days, 12:58:59","329 days, 15:51:58","327 days, 10:01:01"],"id": ["5b02369efb959aa0718a2b08916dfaf0ecaddc69","bdd9d48c25f954047cb5585285f4f6a355e9dff7","fb3ffa522f826d621db27a90e56de1d9e5b899eb"],"name": ["Andres Almiray","Sibylle Peter","Franz-Josef Wiszniewsky"]}}
-=======
-{"date": "2016-02-17T00:00:00","persons": {"age": [379,329,327],"id": ["5b02369efb959aa0718a2b08916dfaf0ecaddc69","bdd9d48c25f954047cb5585285f4f6a355e9dff7","fb3ffa522f826d621db27a90e56de1d9e5b899eb"],"name": ["Andres Almiray","Sibylle Peter","Franz-Josef Wiszniewsky"]}}
->>>>>>> e7f6c25fe357a9320dd194d130ede65b44b74995
